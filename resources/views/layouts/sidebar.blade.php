@@ -23,6 +23,14 @@
                     Settings
                 </a>
             </li>
+
+            <li>
+                <a href="{{ route('customers.index') }}"
+                class="block px-4 py-2 hover:bg-gray-700">
+                Customers
+                </a>
+            </li>
+
         </ul>
     </div>
     <div class="p-4">
