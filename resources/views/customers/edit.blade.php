@@ -1,4 +1,5 @@
 <x-app-layout>
+        @section('page_title', 'Edit Customer')
     <div class="max-h-screen flex items-center justify-center bg-gray-100">
         <div class="w-full max-w-2xl bg-white rounded-xl shadow-lg p-10 ">
             <h2 class="text-2xl font-semibold text-gray-900 mb-2">Edit Customer</h2>

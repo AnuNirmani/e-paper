@@ -40,6 +40,13 @@ class CustomerController extends Controller
             ->with('success', 'Customer added');
     }
 
+
+    public function show($id)
+    {
+        $customer = Customer::getCustomerById($id);
+        return view('customers.show', compact('customer'));
+    }
+
     public function edit($id)
     {
         $customer = Customer::getCustomerById($id);

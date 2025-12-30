@@ -3,6 +3,7 @@
 <x-app-layout>
     <div class="max-h-screen flex items-center justify-center bg-gray-100">
         <div class="w-full max-w-2xl bg-white rounded-xl shadow-lg p-10 ">
+            @section('page_title', 'Add New Customer')
             <h2 class="text-2xl font-semibold text-gray-900 mb-2">Add New Customer</h2>
             <p class="text-gray-500 mb-8">Fill in the details below to add a new customer to the system.</p>
             <form method="POST" action="{{ route('customers.store') }}">
