@@ -32,4 +32,28 @@ Route::middleware('auth')->group(function () {
     Route::resource('customers', CustomerController::class);
 });
 
+
+use App\Http\Controllers\PublicationController;
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/publications', [PublicationController::class, 'index'])->name('publications.index');
+    Route::get('/publications/create', [PublicationController::class, 'create'])->name('publications.create');
+    Route::post('/publications', [PublicationController::class, 'store'])->name('publications.store');
+    Route::get('/publications/{id}/edit', [PublicationController::class, 'edit'])->name('publications.edit');
+    Route::put('/publications/{id}', [PublicationController::class, 'update'])->name('publications.update');
+    Route::delete('/publications/{id}', [PublicationController::class, 'destroy'])->name('publications.destroy');
+});
+
+
+// use App\Http\Controllers\CustomerController;
+
+// Route::middleware(['auth'])->group(function () {
+//     Route::get('/customers', [CustomerController::class, 'index'])->name('customers.index');
+//     Route::get('/customers/create', [CustomerController::class, 'create'])->name('customers.create');
+//     Route::post('/customers', [CustomerController::class, 'store'])->name('customers.store');
+//     Route::get('/customers/{id}/edit', [CustomerController::class, 'edit'])->name('customers.edit');
+//     Route::put('/customers/{id}', [CustomerController::class, 'update'])->name('customers.update');
+//     Route::delete('/customers/{id}', [CustomerController::class, 'destroy'])->name('customers.destroy');
+// });
+
 require __DIR__.'/auth.php';

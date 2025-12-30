@@ -18,16 +18,16 @@
                 </a>
             </li>
             <li>
-                <a href="#"
-                   class="block px-4 py-2 hover:bg-gray-700">
-                    Settings
+                <a href="{{ route('customers.index') }}"
+                class="block px-4 py-2 hover:bg-gray-700">
+                Customers
                 </a>
             </li>
 
             <li>
-                <a href="{{ route('customers.index') }}"
+                <a href="{{ route('publications.index') }}"
                 class="block px-4 py-2 hover:bg-gray-700">
-                Customers
+                Publications
                 </a>
             </li>
 
