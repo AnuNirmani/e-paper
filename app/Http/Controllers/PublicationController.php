@@ -43,10 +43,17 @@ class PublicationController extends Controller
 
     public function update(Request $request, $id)
     {
-        $request->validate([
+        $validator = \Validator::make($request->all(), [
             'name'   => 'required|string|max:255',
             'status' => 'required|in:1,0',
         ]);
+
+        if ($validator->fails()) {
+            return redirect()->route('publications.index')
+                ->withErrors($validator)
+                ->withInput()
+                ->with('edit_error_id', $id);
+        }
 
         Publication::updatePublication($id, $request->all());
 
