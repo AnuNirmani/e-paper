@@ -1,8 +1,8 @@
 
 
 <x-app-layout>
-    <div class="max-h-screen flex items-center justify-center bg-gray-100">
-        <div class="w-full max-w-2xl bg-white rounded-xl shadow-lg p-10 ">
+    <div class="min-h-screen flex items-center justify-center bg-gray-100 py-8">
+        <div class="w-full max-w-2xl bg-white rounded-xl shadow-lg p-10">
             @section('page_title', 'Add New Customer')
             <h2 class="text-2xl font-semibold text-gray-900 mb-2">Add New Customer</h2>
             <p class="text-gray-500 mb-8">Fill in the details below to add a new customer to the system.</p>
@@ -20,6 +20,27 @@
                         <label class="block text-sm font-medium text-gray-700 mb-1">Last Name <span class="text-red-500">*</span></label>
                             <input name="last_name" placeholder="Last Name" class="border border-gray-300 rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-blue-200 focus:border-blue-400 @error('last_name') border-red-500 @enderror">
                             @error('last_name')
+                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                            @enderror
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Phone <span class="text-red-500">*</span></label>
+                            <input name="phone" placeholder="Phone" class="border border-gray-300 rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-blue-200 focus:border-blue-400 @error('phone') border-red-500 @enderror">
+                            @error('phone')
+                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                            @enderror
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">WhatsApp Number<span class="text-red-500">*</span></label>
+                        <input name="whatsapp_number" placeholder="WhatsApp Number" class="border border-gray-300 rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-green-200 focus:border-green-400 @error('whatsapp_number') border-red-500 @enderror">
+                        @error('whatsapp_number')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Email <span class="text-red-500">*</span></label>
+                            <input name="email" placeholder="Email" class="border border-gray-300 rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-blue-200 focus:border-blue-400 @error('email') border-red-500 @enderror">
+                            @error('email')
                                 <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                             @enderror
                     </div>
@@ -46,20 +67,6 @@
                                 <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                             @enderror
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Phone <span class="text-red-500">*</span></label>
-                            <input name="phone" placeholder="Phone" class="border border-gray-300 rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-blue-200 focus:border-blue-400 @error('phone') border-red-500 @enderror">
-                            @error('phone')
-                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                            @enderror
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Email <span class="text-red-500">*</span></label>
-                            <input name="email" placeholder="Email" class="border border-gray-300 rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-blue-200 focus:border-blue-400 @error('email') border-red-500 @enderror">
-                            @error('email')
-                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                            @enderror
-                    </div>
                     <div class="col-span-1 md:col-span-2 flex gap-8">
                         <div class="w-full">
                             <label class="block text-sm font-medium text-gray-700 mb-1">Starting Date <span class="text-red-500">*</span></label>
@@ -76,6 +83,19 @@
                                 @enderror
                         </div>
                     </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Duration (months)<span class="text-red-500">*</span></label>
+                        <select name="duration" class="border border-gray-300 rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-yellow-200 focus:border-yellow-400 @error('duration') border-red-500 @enderror">
+                            <option value="1">1 month</option>
+                            <option value="6">6 months</option>
+                            <option value="12">12 months</option>
+                            <option value="18">18 months</option>
+                            <option value="24">24 months</option>
+                        </select>
+                        @error('duration')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
                     <div class="col-span-1 md:col-span-2">
                         <label class="block text-sm font-medium text-gray-700 mb-1">Status <span class="text-red-500">*</span></label>
                             <select name="status" class="border border-gray-300 rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-blue-200 focus:border-blue-400 @error('status') border-red-500 @enderror">
@@ -85,6 +105,33 @@
                             @error('status')
                                 <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                             @enderror
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Payment Method <span class="text-red-500">*</span></label>
+                        <select name="payment_method" class="border border-gray-300 rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-blue-200 focus:border-blue-400 @error('payment_method') border-red-500 @enderror">
+                            <option value="online">Online</option>
+                            <option value="bank_transfer">Bank Transfer</option>
+                        </select>
+                        @error('payment_method')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Payment Amount (Rs) <span class="text-red-500">*</span></label>
+                        <input name="payment_amount" type="number" min="0" step="0.01" placeholder="Amount in Rs" class="border border-gray-300 rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-yellow-200 focus:border-yellow-400 @error('payment_amount') border-red-500 @enderror">
+                        @error('payment_amount')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Payment Receipt <span class="text-red-500">*</span></label>
+                        <select name="payment_receipt" class="border border-gray-300 rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-blue-200 focus:border-blue-400 @error('payment_receipt') border-red-500 @enderror">
+                            <option value="1">Yes</option>
+                            <option value="0">No</option>
+                        </select>
+                        @error('payment_receipt')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
                 </div>
                 <div class="mt-8 flex justify-end gap-4">
