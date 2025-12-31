@@ -34,6 +34,7 @@ class Publication extends Model
     // Get all (except deleted)
     public static function getAllPublications()
     {
+        // Show all except deleted (-1)
         return DB::table('publications')
             ->where('status', '!=', -1)
             ->orderBy('id', 'desc')
@@ -52,6 +53,7 @@ class Publication extends Model
     // Get single publication
     public static function getPublicationById($id)
     {
+        // Allow fetching inactive (0) and active (1), but not deleted (-1)
         return DB::table('publications')
             ->where('id', $id)
             ->where('status', '!=', -1)
@@ -63,11 +65,13 @@ class Publication extends Model
     =============================== */
     public static function updatePublication($id, $data)
     {
+        // Only allow status 0 (inactive) or 1 (active) for update, never -1 (deleted)
+        $status = ($data['status'] == 1) ? 1 : 0;
         return DB::table('publications')
             ->where('id', $id)
             ->update([
                 'name'       => $data['name'],
-                'status'     => $data['status'],
+                'status'     => $status,
                 'updated_at' => now(),
             ]);
     }

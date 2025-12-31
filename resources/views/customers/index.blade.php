@@ -2,7 +2,7 @@
         @section('page_title', 'Customers')
     <div class="max-w-5xl mx-auto mt-12">
         <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
-            <h2 class="text-xl font-bold text-gray-900 mb-2 md:mb-0">Customers</h2>
+            <h2 class="text-xl font-bold text-gray-900 mb-2 md:mb-0"></h2>
             <a href="{{ route('customers.create') }}" class="bg-green-500 hover:bg-green-600 text-white font-semibold px-4 py-2 rounded-lg shadow transition text-base">+ Add Customer</a>
         </div>
         <div class="bg-white rounded-2xl shadow-lg p-8">

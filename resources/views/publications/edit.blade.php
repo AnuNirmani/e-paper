@@ -1,4 +1,4 @@
-<x-app-layout>
+<!-- <x-app-layout>
 <div class="max-w-xl mx-auto mt-10 bg-white p-6 rounded-lg shadow">
 
     <h2 class="text-xl font-bold mb-6">Edit Publication</h2>
@@ -35,4 +35,4 @@
 
 </form>
 </div>
-</x-app-layout>
+</x-app-layout> -->
