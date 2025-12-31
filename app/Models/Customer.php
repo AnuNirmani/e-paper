@@ -37,6 +37,10 @@ class Customer extends Model
     public static function getActiveCustomers()
     {
         return self::where('status', 1)->get();
+        return DB::table('customers')
+        ->where('status', 1)
+        ->select('id', 'first_name')
+        ->get();
     }
 
     // Get single customer by ID
@@ -96,4 +100,6 @@ class Customer extends Model
             'status' => $status
         ]);
     }
+
+
 }

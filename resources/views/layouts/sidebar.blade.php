@@ -31,6 +31,13 @@
                 </a>
             </li>
 
+            <li>
+                <a href="{{ route('copies.index') }}"
+                class="block px-4 py-2 hover:bg-gray-700">
+                Copies
+                </a>
+            </li>
+
         </ul>
     </div>
     <div class="p-4">

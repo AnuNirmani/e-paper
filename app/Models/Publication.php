@@ -48,6 +48,12 @@ class Publication extends Model
             ->where('status', 1)
             ->orderBy('name')
             ->get();
+
+        return DB::table('publications')
+        ->where('status', 1)
+        ->select('id', 'name')
+        ->get();
+
     }
 
     // Get single publication

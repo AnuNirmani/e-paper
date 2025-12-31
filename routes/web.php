@@ -35,6 +35,8 @@ Route::middleware('auth')->group(function () {
 
 use App\Http\Controllers\PublicationController;
 
+use App\Http\Controllers\CopyController;
+
 Route::middleware(['auth'])->group(function () {
     Route::get('/publications', [PublicationController::class, 'index'])->name('publications.index');
     Route::get('/publications/create', [PublicationController::class, 'create'])->name('publications.create');
@@ -44,6 +46,12 @@ Route::middleware(['auth'])->group(function () {
     Route::match(['put', 'patch'], '/publications/{id}', [PublicationController::class, 'update'])->name('publications.update');
     Route::delete('/publications/{id}', [PublicationController::class, 'destroy'])->name('publications.destroy');
 });
+
+
+Route::get('/copies', [CopyController::class, 'index'])->name('copies.index');
+Route::get('/copies/create', [CopyController::class, 'create'])->name('copies.create');
+Route::post('/copies', [CopyController::class, 'store'])->name('copies.store');
+
 
 
 // use App\Http\Controllers\CustomerController;
