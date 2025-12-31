@@ -9,7 +9,7 @@ class PublicationController extends Controller
 {
     public function index()
     {
-        $publications = Publication::getAllPublications();
+        $publications = Publication::orderBy('id', 'desc')->get();
         return view('publications.index', compact('publications'));
     }
 

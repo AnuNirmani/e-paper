@@ -20,12 +20,25 @@ class CustomerController extends Controller
         }
         $customers = $query->orderBy('id', 'desc')->get();
         $activeCount = Customer::where('status', 1)->count();
-        return view('customers.index', compact('customers', 'activeCount'));
+
+        // Get all publications and their active account counts
+        $publicationStats = [];
+        $publications = \App\Models\Publication::orderBy('name')->get();
+        foreach ($publications as $publication) {
+            $activeAccounts = $publication->customers()->where('status', 1)->count();
+            $publicationStats[] = [
+                'name' => $publication->name,
+                'active_accounts' => $activeAccounts
+            ];
+        }
+
+        return view('customers.index', compact('customers', 'activeCount', 'publicationStats'));
     }
 
     public function create()
     {
-        return view('customers.create');
+        $publications = \App\Models\Publication::getActivePublications();
+        return view('customers.create', compact('publications'));
     }
 
     public function store(Request $request)
@@ -49,7 +62,19 @@ class CustomerController extends Controller
             'payment_amount'  => 'required|numeric|min:0',
             'payment_receipt' => 'required|boolean',
         ]);
-        Customer::storeCustomer($validated);
+        $customer = Customer::storeCustomer($validated);
+        // Handle publications and attachment counts
+        $pubData = [];
+        if ($request->has('publications')) {
+            foreach ($request->input('publications') as $pubId => $pub) {
+                if (isset($pub['selected'])) {
+                    $pubData[$pubId] = ['attachment_count' => $pub['attachment_count'] ?? 1];
+                }
+            }
+        }
+        if (!empty($pubData)) {
+            $customer->publications()->sync($pubData);
+        }
         return redirect()->route('customers.index')
             ->with('success', 'Customer added');
     }
@@ -64,7 +89,10 @@ class CustomerController extends Controller
     public function edit($id)
     {
         $customer = Customer::getCustomerById($id);
-        return view('customers.edit', compact('customer'));
+        $publications = \App\Models\Publication::getActivePublications();
+        // Get attached publications and their attachment counts
+        $customerPublications = $customer->publications()->pluck('attachment_count', 'publication_id')->toArray();
+        return view('customers.edit', compact('customer', 'publications', 'customerPublications'));
     }
 
     public function update(Request $request, $id)
@@ -89,6 +117,17 @@ class CustomerController extends Controller
             'payment_receipt' => 'required|boolean',
         ]);
         Customer::updateCustomer($id, $validated);
+        $customer = Customer::find($id);
+        // Handle publications and attachment counts
+        $pubData = [];
+        if ($request->has('publications')) {
+            foreach ($request->input('publications') as $pubId => $pub) {
+                if (isset($pub['selected'])) {
+                    $pubData[$pubId] = ['attachment_count' => $pub['attachment_count'] ?? 1];
+                }
+            }
+        }
+        $customer->publications()->sync($pubData);
         return redirect()->route('customers.index')
             ->with('success', 'Customer updated');
     }

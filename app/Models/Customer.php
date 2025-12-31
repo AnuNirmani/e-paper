@@ -6,6 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Customer extends Model
 {
+    public function publications()
+    {
+        return $this->belongsToMany(Publication::class, 'customer_publication')
+            ->withPivot('attachment_count')
+            ->withTimestamps();
+    }
     protected $table = 'customers';
 
     protected $fillable = [

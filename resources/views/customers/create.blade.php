@@ -1,3 +1,4 @@
+<!-- Publication and attachment fields will be added here -->
 
 
 <x-app-layout>
@@ -134,9 +135,40 @@
                         @enderror
                     </div>
                 </div>
-                <div class="mt-8 flex justify-end gap-4">
-                    <a href="{{ route('customers.index') }}" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold px-8 py-2 rounded-lg shadow transition text-center">Cancel</a>
-                    <button class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-2 rounded-lg shadow transition">Save Customer</button>
+                <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+                    <div class="col-span-1 md:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Publications & Attachments</label>
+                        <div class="overflow-x-auto rounded-lg border border-gray-200 bg-gray-50">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead>
+                                    <tr>
+                                        <th class="px-4 py-2 text-left text-xs font-semibold text-gray-700">Select</th>
+                                        <th class="px-4 py-2 text-left text-xs font-semibold text-gray-700">Publication</th>
+                                        <th class="px-4 py-2 text-left text-xs font-semibold text-gray-700">Attachment Count</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-100">
+                                    @foreach($publications as $publication)
+                                        <tr>
+                                            <td class="px-4 py-2">
+                                                <input type="checkbox" id="pub_{{ $publication->id }}" name="publications[{{ $publication->id }}][selected]" value="1" class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                                            </td>
+                                            <td class="px-4 py-2">
+                                                <label for="pub_{{ $publication->id }}" class="text-gray-800">{{ $publication->name }}</label>
+                                            </td>
+                                            <td class="px-4 py-2">
+                                                <input type="number" name="publications[{{ $publication->id }}][attachment_count]" min="1" value="1" class="border border-gray-300 rounded-lg px-2 py-1 w-24 focus:ring-2 focus:ring-blue-200 focus:border-blue-400" placeholder="Attachments">
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="flex flex-col md:flex-row justify-end items-center gap-4 md:col-span-2 mt-6">
+                        <a href="{{ route('customers.index') }}" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold px-8 py-2 rounded-lg shadow transition text-center">Cancel</a>
+                        <button class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-2 rounded-lg shadow transition">Save Customer</button>
+                    </div>
                 </div>
             </form>
         </div>

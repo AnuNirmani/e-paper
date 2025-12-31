@@ -15,13 +15,20 @@
             </div>
             <div class="flex flex-col gap-2 md:gap-0 md:flex-row md:items-center">
                 <form method="GET" action="" class="mr-4 flex gap-2">
-                    <input type="text" name="search" placeholder="Search..." value="{{ request('search') }}" class="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-200 focus:border-blue-400" />
+                    <input type="text" name="search" placeholder="Search..." value="{{ request('search') }}" class="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-200 focus:border-blue-400 w-80" />
                     <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-4 py-2 rounded-lg shadow transition">Search</button>
                 </form>
             </div>
         </div>
         <div class="mb-4">
-            <span class="text-gray-700 text-base">active accounts: {{ $activeCount ?? 0 }}</span>
+            <span class="text-gray-700 text-base">All Active Accounts: {{ $activeCount ?? 0 }}</span>
+        </div>
+        <div class="mb-6">
+            <span class="text-gray-700 text-base">
+                @foreach($publicationStats as $i => $stat)
+                    {{ strtoupper($stat['name']) }} Active Accounts: {{ $stat['active_accounts'] }}@if($i < count($publicationStats) - 1), @endif
+                @endforeach
+            </span>
         </div>
         <div class="bg-white rounded-2xl shadow-lg p-8">
             <table class="w-full text-base">
