@@ -29,12 +29,14 @@
                     <!-- CUSTOMER -->
                     <div class="mb-8">
                         <label class="block text-sm font-semibold text-gray-700 mb-3">Select Customer</label>
+                        <input type="text" id="customer-search-watermark" placeholder="Type to search customer" class="w-full border border-gray-300 rounded-lg px-4 py-2 mb-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition" />
                         <select name="customer_id" 
+                                id="customer-select-watermark"
                                 class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition" 
                                 >
                             <option value="">-- Select Customer --</option>
                             @foreach($customers as $customer)
-                                <option value="{{ $customer->id }}">{{ $customer->first_name }}</option>
+                                <option value="{{ $customer->id }}">{{ $customer->first_name }} {{ $customer->last_name }} ({{ $customer->email }})</option>
                             @endforeach
                         </select>
                         <!-- @error('customer_id')
@@ -118,12 +120,14 @@
                     <!-- CUSTOMER -->
                     <div class="mb-8">
                         <label class="block text-sm font-semibold text-gray-700 mb-3">Select Customer</label>
+                        <input type="text" id="customer-search-plain" placeholder="Type to search customer" class="w-full border border-gray-300 rounded-lg px-4 py-2 mb-3 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition" />
                         <select name="customer_id" 
+                                id="customer-select-plain"
                                 class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition" 
                                 >
                             <option value="">-- Select Customer --</option>
                             @foreach($customers as $customer)
-                                <option value="{{ $customer->id }}">{{ $customer->first_name }}</option>
+                                <option value="{{ $customer->id }}">{{ $customer->first_name }} {{ $customer->last_name }} ({{ $customer->email }})</option>
                             @endforeach
                         </select>
                         <!-- @error('customer_id')
@@ -186,3 +190,35 @@
 </div>
 
 </x-app-layout>
+
+<script>
+    (function() {
+        function attachFilter(inputId, selectId) {
+            const input = document.getElementById(inputId);
+            const select = document.getElementById(selectId);
+            if (!input || !select) return;
+
+            const options = Array.from(select.options);
+            input.addEventListener('input', () => {
+                const term = input.value.toLowerCase();
+
+                options.forEach((opt, idx) => {
+                    if (idx === 0) {
+                        opt.hidden = false;
+                        return;
+                    }
+                    const text = opt.textContent.toLowerCase();
+                    opt.hidden = term.length ? !text.includes(term) : false;
+                });
+
+                // If current selection is hidden, reset to placeholder
+                if (select.selectedOptions.length && select.selectedOptions[0].hidden) {
+                    select.selectedIndex = 0;
+                }
+            });
+        }
+
+        attachFilter('customer-search-watermark', 'customer-select-watermark');
+        attachFilter('customer-search-plain', 'customer-select-plain');
+    })();
+</script>
