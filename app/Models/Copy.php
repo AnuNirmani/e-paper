@@ -16,6 +16,20 @@ class Copy extends Model
     ];
 
     /* =========================
+        RELATIONSHIPS
+    ========================== */
+
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class);
+    }
+
+    public function publication()
+    {
+        return $this->belongsTo(Publication::class);
+    }
+
+    /* =========================
         CRUD QUERIES
     ========================== */
 
