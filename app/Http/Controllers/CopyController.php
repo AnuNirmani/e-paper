@@ -17,8 +17,8 @@ class CopyController extends Controller
 
     public function create()
     {
-        $customers = Customer::getActiveCustomers();
-        $publications = Publication::getActivePublications();
+        $customers = Customer::where('status', 1)->orderBy('first_name')->get();
+        $publications = Publication::where('status', 1)->orderBy('name')->get();
 
         return view('copies.create', compact('customers', 'publications'));
     }

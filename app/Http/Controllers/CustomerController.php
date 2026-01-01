@@ -37,7 +37,7 @@ class CustomerController extends Controller
 
     public function create()
     {
-        $publications = \App\Models\Publication::getActivePublications();
+        $publications = \App\Models\Publication::where('status', 1)->orderBy('name')->get();
         return view('customers.create', compact('publications'));
     }
 
@@ -82,14 +82,14 @@ class CustomerController extends Controller
 
     public function show($id)
     {
-        $customer = Customer::getCustomerById($id);
+        $customer = Customer::findOrFail($id);
         return view('customers.show', compact('customer'));
     }
 
     public function edit($id)
     {
-        $customer = Customer::getCustomerById($id);
-        $publications = \App\Models\Publication::getActivePublications();
+        $customer = Customer::findOrFail($id);
+        $publications = \App\Models\Publication::where('status', 1)->orderBy('name')->get();
         // Get attached publications and their attachment counts
         $customerPublications = $customer->publications()->pluck('attachment_count', 'publication_id')->toArray();
         return view('customers.edit', compact('customer', 'publications', 'customerPublications'));

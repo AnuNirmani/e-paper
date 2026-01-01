@@ -24,7 +24,10 @@ class PublicationController extends Controller
             'name' => 'required|string|max:255',
         ]);
 
-        Publication::createPublication($request->all());
+        Publication::create([
+            'name' => $request->name,
+            'status' => $request->status ?? 1,
+        ]);
 
         return redirect()->route('publications.index')
             ->with('success', 'Publication created successfully');
@@ -32,11 +35,7 @@ class PublicationController extends Controller
 
     public function edit($id)
     {
-        $publication = Publication::getPublicationById($id);
-
-        if (!$publication) {
-            abort(404);
-        }
+        $publication = Publication::findOrFail($id);
 
         return view('publications.edit', compact('publication'));
     }
@@ -55,7 +54,11 @@ class PublicationController extends Controller
                 ->with('edit_error_id', $id);
         }
 
-        Publication::updatePublication($id, $request->all());
+        $publication = Publication::findOrFail($id);
+        $publication->update([
+            'name' => $request->name,
+            'status' => $request->status,
+        ]);
 
         return redirect()->route('publications.index')
             ->with('success', 'Publication updated successfully');
@@ -63,7 +66,8 @@ class PublicationController extends Controller
 
     public function destroy($id)
     {
-        Publication::deletePublication($id);
+        $publication = Publication::findOrFail($id);
+        $publication->delete();
 
         return redirect()->route('publications.index')
             ->with('success', 'Publication deleted successfully');
