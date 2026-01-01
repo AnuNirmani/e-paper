@@ -21,7 +21,7 @@ class PublicationController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|max:255|unique:publications,name',
         ]);
 
         Publication::create([
@@ -43,7 +43,7 @@ class PublicationController extends Controller
     public function update(Request $request, $id)
     {
         $validator = \Validator::make($request->all(), [
-            'name'   => 'required|string|max:255',
+            'name'   => 'required|string|max:255|unique:publications,name,' . $id,
             'status' => 'required|in:1,0',
         ]);
 

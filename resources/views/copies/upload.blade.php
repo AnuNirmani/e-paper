@@ -31,15 +31,15 @@
                         <label class="block text-sm font-semibold text-gray-700 mb-3">Select Customer</label>
                         <select name="customer_id" 
                                 class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition" 
-                                required>
+                                >
                             <option value="">-- Select Customer --</option>
                             @foreach($customers as $customer)
                                 <option value="{{ $customer->id }}">{{ $customer->first_name }}</option>
                             @endforeach
                         </select>
-                        @error('customer_id')
+                        <!-- @error('customer_id')
                             <span class="text-red-500 text-sm mt-1 block">{{ $message }}</span>
-                        @enderror
+                        @enderror -->
                     </div>
 
                     <!-- CATEGORY -->
@@ -51,7 +51,7 @@
                                     <input type="radio" name="publication_id"
                                            value="{{ $publication->id }}"
                                            class="w-4 h-4 text-blue-600 focus:ring-2 focus:ring-blue-500"
-                                           required>
+                                           >
                                     <span class="ml-3 font-medium text-gray-700">{{ $publication->name }}</span>
                                 </label>
                             @endforeach
@@ -67,14 +67,14 @@
                         <input type="file"
                                name="file"
                                class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-                               required>
+                               >
                         @error('file')
                             <span class="text-red-500 text-sm mt-1 block">{{ $message }}</span>
                         @enderror
                     </div>
 
                     <!-- MESSAGE -->
-                    <div class="mb-8">
+                    <!-- <div class="mb-8">
                         <label class="block text-sm font-semibold text-gray-700 mb-3">Message (Optional)</label>
                         <textarea name="message"
                                   rows="4"
@@ -83,7 +83,7 @@
                         @error('message')
                             <span class="text-red-500 text-sm mt-1 block">{{ $message }}</span>
                         @enderror
-                    </div>
+                    </div> -->
 
                     <button type="submit" 
                             class="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold px-8 py-4 rounded-lg hover:from-blue-700 hover:to-blue-800 transform hover:scale-[1.02] transition shadow-lg">
@@ -120,15 +120,15 @@
                         <label class="block text-sm font-semibold text-gray-700 mb-3">Select Customer</label>
                         <select name="customer_id" 
                                 class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition" 
-                                required>
+                                >
                             <option value="">-- Select Customer --</option>
                             @foreach($customers as $customer)
                                 <option value="{{ $customer->id }}">{{ $customer->first_name }}</option>
                             @endforeach
                         </select>
-                        @error('customer_id')
+                        <!-- @error('customer_id')
                             <span class="text-red-500 text-sm mt-1 block">{{ $message }}</span>
-                        @enderror
+                        @enderror -->
                     </div>
 
                     <!-- CATEGORY -->
@@ -140,7 +140,7 @@
                                     <input type="radio" name="publication_id"
                                            value="{{ $publication->id }}"
                                            class="w-4 h-4 text-gray-600 focus:ring-2 focus:ring-gray-500"
-                                           required>
+                                           >
                                     <span class="ml-3 font-medium text-gray-700">{{ $publication->name }}</span>
                                 </label>
                             @endforeach
@@ -156,14 +156,14 @@
                         <input type="file"
                                name="file"
                                class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-gray-50 file:text-gray-700 hover:file:bg-gray-100"
-                               required>
+                               >
                         @error('file')
                             <span class="text-red-500 text-sm mt-1 block">{{ $message }}</span>
                         @enderror
                     </div>
 
                     <!-- MESSAGE -->
-                    <div class="mb-8">
+                    <!-- <div class="mb-8">
                         <label class="block text-sm font-semibold text-gray-700 mb-3">Message (Optional)</label>
                         <textarea name="message"
                                   rows="4"
@@ -172,7 +172,7 @@
                         @error('message')
                             <span class="text-red-500 text-sm mt-1 block">{{ $message }}</span>
                         @enderror
-                    </div>
+                    </div> -->
 
                     <button type="submit" 
                             class="w-full bg-gradient-to-r from-gray-600 to-gray-700 text-white font-semibold px-8 py-4 rounded-lg hover:from-gray-700 hover:to-gray-800 transform hover:scale-[1.02] transition shadow-lg">
