@@ -50,9 +50,13 @@ Route::middleware(['auth'])->group(function () {
 });
 
 
-Route::get('/copies', [CopyController::class, 'index'])->name('copies.index');
-Route::get('/copies/create', [CopyController::class, 'create'])->name('copies.create');
-Route::post('/copies', [CopyController::class, 'store'])->name('copies.store');
+Route::middleware(['auth'])->group(function () {
+    Route::get('/copies', [CopyController::class, 'index'])->name('copies.index');
+    Route::get('/copies/create', [CopyController::class, 'create'])->name('copies.create');
+    Route::post('/copies', [CopyController::class, 'store'])->name('copies.store');
+    Route::get('/copies/upload', [CopyController::class, 'upload'])->name('copies.upload');
+    Route::post('/copies/upload', [CopyController::class, 'uploadStore'])->name('copies.upload.store');
+});
 
 
 

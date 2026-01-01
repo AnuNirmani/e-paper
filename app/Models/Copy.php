@@ -40,6 +40,7 @@ class Copy extends Model
                 'customers.first_name as customer_first_name',
                 'publications.name as publication_name'
             )
+            ->orderBy('copies.id', 'desc')
             ->get();
     }
 

@@ -34,5 +34,14 @@ class Publication extends Model
         ]);
     }
 
-    // ...existing code for other methods...
+    /* ===============================
+       GET ACTIVE PUBLICATIONS
+    =============================== */
+    public static function getActivePublications()
+    {
+        return DB::table('publications')
+            ->where('status', 1)
+            ->orderBy('name')
+            ->get();
+    }
 }

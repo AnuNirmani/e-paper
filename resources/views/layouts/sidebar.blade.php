@@ -38,6 +38,12 @@
                 </a>
             </li>
 
+            <li>
+                <a href="{{ route('copies.upload') }}"
+                class="block px-4 py-2 hover:bg-gray-700">
+                Upload Copy
+                </a>
+
         </ul>
     </div>
     <div class="p-4">
