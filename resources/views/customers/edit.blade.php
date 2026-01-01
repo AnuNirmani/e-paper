@@ -18,6 +18,28 @@
                 @csrf
                 @method('PUT')
                 
+                @if ($errors->any())
+                    <div class="bg-red-50 border-l-4 border-red-400 p-4 mb-6 rounded-lg">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <svg class="h-5 w-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </div>
+                            <div class="ml-3">
+                                <h3 class="text-sm font-medium text-red-800">There were {{ $errors->count() }} error(s) with your submission</h3>
+                                <div class="mt-2 text-sm text-red-700">
+                                    <ul class="list-disc list-inside space-y-1">
+                                        @foreach ($errors->all() as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+                
                 <!-- Personal Information Section -->
                 <div class="bg-white rounded-xl shadow-lg overflow-hidden mb-6">
                     <div class="bg-gradient-to-r from-blue-500 to-blue-600 px-6 py-4">
@@ -389,6 +411,9 @@
                                 </tbody>
                             </table>
                         </div>
+                        @error('publications')
+                            <p class="text-red-500 text-sm mt-2">{{ $message }}</p>
+                        @enderror
                     </div>
                 </div>
 

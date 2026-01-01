@@ -62,7 +62,7 @@ class CustomerController extends Controller
             'payment_amount'  => 'required|numeric|min:0',
             'payment_receipt' => 'required|boolean',
         ]);
-        $customer = Customer::storeCustomer($validated);
+
         // Handle publications and attachment counts
         $pubData = [];
         if ($request->has('publications')) {
@@ -72,9 +72,16 @@ class CustomerController extends Controller
                 }
             }
         }
-        if (!empty($pubData)) {
-            $customer->publications()->sync($pubData);
+
+        // Validate at least one publication is selected
+        if (empty($pubData)) {
+            return redirect()->back()
+                ->withErrors(['publications' => 'Please select at least one publication.'])
+                ->withInput();
         }
+
+        $customer = Customer::storeCustomer($validated);
+        $customer->publications()->sync($pubData);
         return redirect()->route('customers.index')
             ->with('success', 'Customer added');
     }
@@ -116,8 +123,7 @@ class CustomerController extends Controller
             'payment_amount'  => 'required|numeric|min:0',
             'payment_receipt' => 'required|boolean',
         ]);
-        Customer::updateCustomer($id, $validated);
-        $customer = Customer::find($id);
+
         // Handle publications and attachment counts
         $pubData = [];
         if ($request->has('publications')) {
@@ -127,6 +133,16 @@ class CustomerController extends Controller
                 }
             }
         }
+
+        // Validate at least one publication is selected
+        if (empty($pubData)) {
+            return redirect()->back()
+                ->withErrors(['publications' => 'Please select at least one publication.'])
+                ->withInput();
+        }
+
+        Customer::updateCustomer($id, $validated);
+        $customer = Customer::find($id);
         $customer->publications()->sync($pubData);
         return redirect()->route('customers.index')
             ->with('success', 'Customer updated');
