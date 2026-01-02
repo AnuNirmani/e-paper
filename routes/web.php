@@ -58,6 +58,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/copies', [CopyController::class, 'store'])->name('copies.store');
     Route::get('/copies/upload', [CopyController::class, 'upload'])->name('copies.upload');
     Route::post('/copies/upload', [CopyController::class, 'uploadStore'])->name('copies.upload.store');
+    Route::delete('/copies/{id}', [CopyController::class, 'destroy'])->name('copies.destroy');
 });
 
 

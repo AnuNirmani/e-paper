@@ -14,6 +14,13 @@ class Customer extends Model
     }
     protected $table = 'customers';
 
+    protected $casts = [
+        'starting_date' => 'datetime',
+        'ending_date' => 'datetime',
+        'status' => 'integer',
+        'payment_receipt' => 'boolean',
+    ];
+
     protected $fillable = [
         'first_name',
         'last_name',

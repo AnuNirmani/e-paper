@@ -1,4 +1,4 @@
-<x-app-layout>
+<!-- <x-app-layout>
 <div class="max-w-xl mx-auto p-6 bg-white shadow rounded">
 
     <h2 class="text-xl font-bold mb-4">Add Copy</h2>
@@ -6,7 +6,7 @@
     <form method="POST" action="{{ route('copies.store') }}">
         @csrf
 
-        <!-- Customer -->
+
         <div class="mb-4">
             <label class="block mb-1">Customer</label>
             <select name="customer_id" class="w-full border p-2 rounded">
@@ -18,7 +18,7 @@
             </select>
         </div>
 
-        <!-- Publication -->
+
         <div class="mb-4">
             <label class="block mb-1">Publication</label>
             <select name="publication_id" class="w-full border p-2 rounded">
@@ -30,7 +30,7 @@
             </select>
         </div>
 
-        <!-- Message -->
+
         <div class="mb-4">
             <label class="block mb-1">Message</label>
             <textarea name="message"
@@ -45,4 +45,4 @@
 
     </form>
 </div>
-</x-app-layout>
+</x-app-layout> -->

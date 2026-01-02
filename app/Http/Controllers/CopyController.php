@@ -107,4 +107,13 @@ class CopyController extends Controller
         return redirect()->route('copies.index')
                          ->with('success', "File uploaded. Sent to $sentCount customers.");
     }
+
+    public function destroy($id)
+    {
+        $copy = Copy::findOrFail($id);
+        $copy->delete();
+
+        return redirect()->route('copies.index')
+                         ->with('success', 'Copy deleted successfully');
+    }
 }
