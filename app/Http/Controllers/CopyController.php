@@ -47,10 +47,10 @@ class CopyController extends Controller
         return view('copies.upload', compact('customers', 'publications'));
     }
 
-    public function uploadStore(Request $request)
+    public function uploadStore(Request $request, \App\Services\UltraMsgService $ultraMsgService)
     {
         $request->validate([
-            'customer_id'    => 'required',
+            'customer_id'    => 'nullable',
             'publication_id' => 'required',
             'file'           => 'required|file',
             'message'        => 'nullable|string'
@@ -60,20 +60,51 @@ class CopyController extends Controller
         $file = $request->file('file');
         $filename = time() . '_' . $file->getClientOriginalName();
 
-        $path = $request->has('watermark')
+        $folder = $request->has('watermark')
             ? 'uploads/with_watermark'
             : 'uploads/without_watermark';
 
-        $file->move(public_path($path), $filename);
+        $file->move(public_path($folder), $filename);
+        
+        // Prepare Base64 Data for UltraMsg (Avoids localhost public URL issue)
+        $fullPath = public_path($folder . '/' . $filename);
+        $fileData = file_get_contents($fullPath);
+        $base64Data = base64_encode($fileData);
+        // Assuming PDF properly
+        $documentBody = "data:application/pdf;base64," . $base64Data;
 
-        /* SAVE COPY RECORD */
-        Copy::createCopy([
-            'customer_id'    => $request->customer_id,
-            'publication_id' => $request->publication_id,
-            'message'        => $request->message
-        ]);
+        /* BULK SEND LOGIC */
+        // Get active customers for this publication
+        $publication = Publication::findOrFail($request->publication_id);
+        $customers = $publication->customers()->where('customers.status', 1)->get();
+
+        \Illuminate\Support\Facades\Log::info("UploadStore: Found " . $customers->count() . " active customers for publication " . $request->publication_id);
+
+        $sentCount = 0;
+        foreach ($customers as $customer) {
+            if (!empty($customer->whatsapp_number)) {
+                // Send via UltraMsg
+                $ultraMsgService->sendDocument(
+                    $customer->whatsapp_number,
+                    $documentBody,
+                    $filename,
+                    $request->message
+                );
+
+                // Create Copy Record for each customer
+                Copy::createCopy([
+                    'customer_id'    => $customer->id,
+                    'publication_id' => $request->publication_id,
+                    'message'        => $request->message
+                ]);
+                
+                $sentCount++;
+            } else {
+                 \Illuminate\Support\Facades\Log::warning("UploadStore: Customer {$customer->id} has no WhatsApp number.");
+            }
+        }
 
         return redirect()->route('copies.index')
-                         ->with('success', 'File uploaded successfully');
+                         ->with('success', "File uploaded. Sent to $sentCount customers.");
     }
 }
