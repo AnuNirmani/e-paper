@@ -148,7 +148,7 @@
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-gray-900">{{ $customer->ending_date }}</div>
+                                <div class="text-sm text-gray-900">{{ $customer->ending_date ? $customer->ending_date->format('Y-m-d') : '' }}</div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                 <div class="flex items-center gap-2">
@@ -191,6 +191,11 @@
                     @endforelse
                     </tbody>
                 </table>
+            </div>
+            
+            <!-- Pagination Links -->
+            <div class="px-6 py-4 bg-gray-50 border-t border-gray-200">
+                {{ $customers->links() }}
             </div>
         </div>
     </div>

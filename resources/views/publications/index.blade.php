@@ -235,6 +235,12 @@
                 </table>
             </div>
         </div>
+
+        <!-- Pagination Links -->
+            <div class="px-6 py-4 bg-gray-50 border-t border-gray-200">
+                {{ $publications->links() }}
+            </div>
+
     </div>
 
     <!-- Inline Edit Script -->

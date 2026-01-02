@@ -18,7 +18,7 @@ class CustomerController extends Controller
                   ->orWhere('whatsapp_number', 'like', "%$search%");
             });
         }
-        $customers = $query->orderBy('id', 'desc')->get();
+        $customers = $query->orderBy('id', 'desc')->paginate(10);
         $activeCount = Customer::where('status', 1)->count();
 
         // Get all publications and their active account counts
