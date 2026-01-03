@@ -82,20 +82,17 @@ ULTRAMSG_TOKEN=your_token
 
 ## 📄 License
 
-Built with Laravel. For internal use.
+This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
 
 ## Contributing
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+This is a private project for Wijeya Newspapers Limited. For internal development inquiries, please contact the development team.
 
 ## Security Vulnerabilities
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+If you find a security vulnerability, please report it privately to oanuttara@gmail.com instead of opening a public issue. Include:
+- A clear description of the issue and steps to reproduce
+- Expected vs actual behavior
+- Any relevant logs or stack traces
 
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+We aim to acknowledge reports within 2 business days.
