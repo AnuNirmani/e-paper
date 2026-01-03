@@ -45,6 +45,37 @@ class Customer extends Model
        QUERY METHODS
        ========================= */
 
+    // Scope: Search customers
+    public function scopeSearch($query, $search)
+    {
+        if (!empty($search)) {
+            return $query->where(function($q) use ($search) {
+                $q->where('first_name', 'like', "%{$search}%")
+                  ->orWhere('last_name', 'like', "%{$search}%")
+                  ->orWhere('whatsapp_number', 'like', "%{$search}%");
+            });
+        }
+        return $query;
+    }
+
+    // Get active customer count
+    public static function getActiveCount()
+    {
+        return self::where('status', 1)->count();
+    }
+
+    // Activate all customers
+    public static function activateAll()
+    {
+        return self::where('status', '!=', 1)->update(['status' => 1]);
+    }
+
+    // Deactivate all customers
+    public static function deactivateAll()
+    {
+        return self::where('status', '!=', 0)->update(['status' => 0]);
+    }
+
     // Get all customers
     public static function getAllCustomers()
     {

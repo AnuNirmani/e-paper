@@ -10,16 +10,10 @@ class CustomerController extends Controller
 {
     public function index()
     {
-        $query = Customer::query();
-        if ($search = request('search')) {
-            $query->where(function($q) use ($search) {
-                $q->where('first_name', 'like', "%$search%")
-                  ->orWhere('last_name', 'like', "%$search%")
-                  ->orWhere('whatsapp_number', 'like', "%$search%");
-            });
-        }
-        $customers = $query->orderBy('id', 'desc')->paginate(10);
-        $activeCount = Customer::where('status', 1)->count();
+        $customers = Customer::search(request('search'))
+            ->orderBy('id', 'desc')
+            ->paginate(10);
+        $activeCount = Customer::getActiveCount();
 
         // Get all publications and their active account counts
         $publicationStats = [];
@@ -156,13 +150,13 @@ class CustomerController extends Controller
     }
     public function activateAll()
     {
-        Customer::where('status', '!=', 1)->update(['status' => 1]);
+        Customer::activateAll();
         return redirect()->route('customers.index')->with('success', 'All customers activated.');
     }
 
     public function deactivateAll()
     {
-        Customer::where('status', '!=', 0)->update(['status' => 0]);
+        Customer::deactivateAll();
         return redirect()->route('customers.index')->with('success', 'All customers deactivated.');
     }
 }

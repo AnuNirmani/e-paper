@@ -148,6 +148,13 @@
                         </tbody>
                     </table>
                 </div>
+                
+                <!-- Pagination Links -->
+                @if($copies->count() > 0)
+                <div class="px-6 py-4 bg-gray-50 border-t border-gray-200">
+                    {{ $copies->links() }}
+                </div>
+                @endif
                 @else
                 <div class="p-12 text-center">
                     <svg class="w-16 h-16 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -11,7 +11,7 @@ class CopyController extends Controller
 {
     public function index()
     {
-        $copies = Copy::getAllCopies();
+        $copies = Copy::getAllCopies()->paginate(20);
         return view('copies.index', compact('copies'));
     }
 
