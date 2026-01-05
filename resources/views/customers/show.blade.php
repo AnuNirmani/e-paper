@@ -202,11 +202,7 @@
 
             <!-- Publications Section -->
             @php
-                $customerPublications = \App\Models\Copy::where('customer_id', $customer->id)
-                    ->with('publication')
-                    ->get()
-                    ->groupBy('publication_id')
-                    ->map(fn($group) => $group->count());
+                $customerPublications = $customer->publications;
             @endphp
             @if($customerPublications->count() > 0)
             <div class="bg-white rounded-xl shadow-lg overflow-hidden mb-6">
@@ -220,11 +216,7 @@
                 </div>
                 <div class="p-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        @foreach($customerPublications as $publicationId => $count)
-                            @php
-                                $publication = \App\Models\Publication::find($publicationId);
-                            @endphp
-                            @if($publication)
+                        @foreach($customerPublications as $publication)
                             <div class="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 rounded-lg p-4">
                                 <div class="flex items-center justify-between">
                                     <div class="flex items-center">
@@ -233,12 +225,11 @@
                                         </div> -->
                                         <div class="ml-3">
                                             <h3 class="text-sm font-semibold text-gray-900">{{ $publication->name }}</h3>
-                                            <p class="text-xs text-gray-500">{{ $count }} copies</p>
+                                            <p class="text-xs text-gray-500">{{ $publication->pivot->attachment_count }} {{ $publication->pivot->attachment_count == 1 ? 'copy' : 'copies' }}</p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            @endif
                         @endforeach
                     </div>
                 </div>

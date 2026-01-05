@@ -63,4 +63,15 @@ class UltraMsgService
             return null;
         }
     }
+
+    /**
+     * Get the default caption for daily paper
+     * 
+     * @param string $firstName
+     * @return string
+     */
+    public function getDailyPaperCaption($firstName)
+    {
+        return "Hello " . $firstName . ", this is today paper";
+    }
 }

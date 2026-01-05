@@ -83,24 +83,30 @@ class CopyController extends Controller
         $sentCount = 0;
         foreach ($customers as $customer) {
             if (!empty($customer->whatsapp_number)) {
-                $caption = "Hello " . $customer->first_name . ", this is today paper";
-
-                // Send via UltraMsg
-                $ultraMsgService->sendDocument(
-                    $customer->whatsapp_number,
-                    $documentBody,
-                    $filename,
-                    $caption
-                );
-
-                // Create Copy Record for each customer
-                Copy::createCopy([
-                    'customer_id'    => $customer->id,
-                    'publication_id' => $request->publication_id,
-                    'message'        => $caption
-                ]);
+                $caption = $ultraMsgService->getDailyPaperCaption($customer->first_name);
                 
-                $sentCount++;
+                // Get copy count, default to 1 if 0 or null
+                $copyCount = $customer->pivot->attachment_count ?? 1;
+                if ($copyCount < 1) $copyCount = 1;
+
+                for ($i = 0; $i < $copyCount; $i++) {
+                    // Send via UltraMsg
+                    $ultraMsgService->sendDocument(
+                        $customer->whatsapp_number,
+                        $documentBody,
+                        $filename,
+                        $caption
+                    );
+
+                    // Create Copy Record for each customer
+                    Copy::createCopy([
+                        'customer_id'    => $customer->id,
+                        'publication_id' => $request->publication_id,
+                        'message'        => $caption
+                    ]);
+                    
+                    $sentCount++;
+                }
             } else {
                  \Illuminate\Support\Facades\Log::warning("UploadStore: Customer {$customer->id} has no WhatsApp number.");
             }

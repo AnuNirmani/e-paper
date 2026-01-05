@@ -220,7 +220,7 @@
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                                         </svg>
                                     </div>
-                                    <input name="starting_date" type="date" value="{{ old('starting_date', $customer->starting_date) }}" class="border border-gray-300 rounded-lg pl-10 pr-4 py-3 w-full focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all @error('starting_date') border-red-500 ring-2 ring-red-200 @enderror">
+                                    <input name="starting_date" type="date" value="{{ old('starting_date', $customer->starting_date ? $customer->starting_date->format('Y-m-d') : '') }}" class="border border-gray-300 rounded-lg pl-10 pr-4 py-3 w-full focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all @error('starting_date') border-red-500 ring-2 ring-red-200 @enderror">
                                     @error('starting_date')
                                         <p class="text-red-500 text-sm mt-1 flex items-center">
                                             <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
@@ -241,7 +241,7 @@
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                                         </svg>
                                     </div>
-                                    <input name="ending_date" type="date" value="{{ old('ending_date', $customer->ending_date) }}" class="border border-gray-300 rounded-lg pl-10 pr-4 py-3 w-full focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all @error('ending_date') border-red-500 ring-2 ring-red-200 @enderror">
+                                    <input name="ending_date" type="date" value="{{ old('ending_date', $customer->ending_date ? $customer->ending_date->format('Y-m-d') : '') }}" class="border border-gray-300 rounded-lg pl-10 pr-4 py-3 w-full focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all @error('ending_date') border-red-500 ring-2 ring-red-200 @enderror">
                                     @error('ending_date')
                                         <p class="text-red-500 text-sm mt-1 flex items-center">
                                             <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
