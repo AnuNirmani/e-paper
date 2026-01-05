@@ -1,5 +1,5 @@
 
-<div class="w-64 h-screen bg-gray-900 text-white fixed left-0 top-0 flex flex-col justify-between">
+<div class="hidden lg:flex lg:w-64 h-screen bg-gray-900 text-white fixed left-0 top-0 flex flex-col justify-between">
     <div>
         <div class="p-4 text-xl font-bold border-b border-gray-700">
             Admin Panel

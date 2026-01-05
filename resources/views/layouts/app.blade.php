@@ -5,6 +5,9 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
+        <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
+        <link rel="shortcut icon" href="{{ asset('favicon.png') }}">
+
         <title>{{ config('app.name', 'Laravel') }}</title>
 
         <!-- Fonts -->
@@ -15,16 +18,16 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans antialiased">
-    <div class="min-h-screen bg-gray-100 flex">
+    <div class="min-h-screen bg-gray-100 lg:flex">
 
         {{-- Sidebar --}}
         @include('layouts.sidebar')
 
         {{-- Main content --}}
-        <div class="flex-1 ml-64">
+        <div class="flex-1 w-full min-w-0 lg:ml-64 ml-0">
             @include('layouts.navigation')
 
-            <main class="p-6">
+            <main class="p-4 sm:p-6">
                 {{ $slot }}
             </main>
         </div>

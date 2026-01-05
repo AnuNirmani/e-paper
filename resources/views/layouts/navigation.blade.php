@@ -66,6 +66,21 @@
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
+                {{ __('Users') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('customers.index')" :active="request()->routeIs('customers.*')">
+                {{ __('Customers') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('publications.index')" :active="request()->routeIs('publications.*')">
+                {{ __('Publications') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('copies.index')" :active="request()->routeIs('copies.index')">
+                {{ __('Copies') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('copies.upload')" :active="request()->routeIs('copies.upload')">
+                {{ __('Upload Copy') }}
+            </x-responsive-nav-link>
         </div>
 
         <!-- Responsive Settings Options -->
