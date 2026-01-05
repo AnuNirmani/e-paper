@@ -20,6 +20,12 @@
             </div>
         @endif
 
+        @if (session('error'))
+            <div class="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-red-800">
+                {{ session('error') }}
+            </div>
+        @endif
+
         <div class="bg-white rounded-xl shadow-md p-4 mb-6">
             <form method="GET" action="" class="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
                 <div class="relative flex-1 w-full sm:w-auto">
@@ -60,15 +66,19 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="flex items-center gap-2 text-sm">
-                                        <!-- <a href="{{ route('users.show', $user) }}" class="px-3 py-1 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 transition">View</a> -->
-                                        <a href="{{ route('users.edit', $user) }}" class="px-3 py-1 rounded-lg bg-amber-50 text-amber-700 hover:bg-amber-100 transition">Edit</a>
-                                        <form action="{{ route('users.destroy', $user) }}" method="POST" class="inline">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" onclick="return confirm('Delete this user?')" class="px-3 py-1 rounded-lg bg-red-50 text-red-700 hover:bg-red-100 transition">
-                                                Delete
-                                            </button>
-                                        </form>
+                                        @if(auth()->id() === $user->id)
+                                            <span class="px-3 py-1 rounded-lg bg-gray-100 text-gray-500 cursor-not-allowed">Current User</span>
+                                        @else
+                                            <!-- <a href="{{ route('users.show', $user) }}" class="px-3 py-1 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 transition">View</a> -->
+                                            <a href="{{ route('users.edit', $user) }}" class="px-3 py-1 rounded-lg bg-amber-50 text-amber-700 hover:bg-amber-100 transition">Edit</a>
+                                            <form action="{{ route('users.destroy', $user) }}" method="POST" class="inline">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" onclick="return confirm('Delete this user?')" class="px-3 py-1 rounded-lg bg-red-50 text-red-700 hover:bg-red-100 transition">
+                                                    Delete
+                                                </button>
+                                            </form>
+                                        @endif
                                     </div>
                                 </td>
                             </tr>

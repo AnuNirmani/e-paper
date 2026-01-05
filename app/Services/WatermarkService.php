@@ -47,10 +47,10 @@ class WatermarkService
             $task->setMode('text');
             $task->setVerticalPosition('middle');
             $task->setHorizontalPosition('center');
-            $task->setRotation(45);
+            $task->setRotation(0);
             $task->setTransparency(30); // 0-100
             $task->setFontFamily('Arial');
-            $task->setFontSize(50);
+            $task->setFontSize(40);
             $task->setLayer('above');
             
             if ($outputFilename) {

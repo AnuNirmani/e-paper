@@ -42,11 +42,19 @@ class UserController extends Controller
 
     public function edit(User $user)
     {
+        if (auth()->id() === $user->id) {
+            return redirect()->route('users.index')->with('error', 'You cannot edit your own account.');
+        }
+
         return view('users.edit', compact('user'));
     }
 
     public function update(Request $request, User $user)
     {
+        if (auth()->id() === $user->id) {
+            return redirect()->route('users.index')->with('error', 'You cannot edit your own account.');
+        }
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users,email,' . $user->id,
@@ -64,6 +72,10 @@ class UserController extends Controller
 
     public function destroy(User $user)
     {
+        if (auth()->id() === $user->id) {
+            return redirect()->route('users.index')->with('error', 'You cannot delete your own account.');
+        }
+
         $user->delete();
 
         return redirect()->route('users.index')->with('success', 'User deleted successfully.');
