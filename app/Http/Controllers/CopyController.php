@@ -66,36 +66,20 @@ class CopyController extends Controller
         $folder = $request->has('watermark')
             ? 'uploads/with_watermark'
             : 'uploads/without_watermark';
+        
+        // Ensure folder exists
+        if (!file_exists(public_path($folder))) {
+            mkdir(public_path($folder), 0777, true);
+        }
 
         $file->move(public_path($folder), $filename);
         
-        $fullPath = public_path($folder . '/' . $filename);
+        $originalFullPath = public_path($folder . '/' . $filename);
 
-        // Apply Watermark if requested
-        if ($request->has('watermark') && $request->watermark == '1') {
-            try {
-                // Use Publication Name or default text
-                $watermarkText = $publication->name ?? 'e-Paper';
-                
-                // Add watermark - this might overwrite or create new file
-                // We pass the folder as output. SDK likely keeps filename.
-                $newPath = $watermarkService->addWatermark($fullPath, $watermarkText, public_path($folder));
-                
-                if ($newPath && file_exists($newPath)) {
-                    $fullPath = $newPath;
-                    $filename = basename($fullPath);
-                }
-            } catch (\Exception $e) {
-                \Illuminate\Support\Facades\Log::error("Watermarking failed: " . $e->getMessage());
-                // Proceed with original file or fail? Proceeding seems safer to not break flow, but maybe notify?
-            }
-        }
-
-        // Prepare Base64 Data for UltraMsg (Avoids localhost public URL issue)
-        $fileData = file_get_contents($fullPath);
-        $base64Data = base64_encode($fileData);
-        // Assuming PDF properly
-        $documentBody = "data:application/pdf;base64," . $base64Data;
+        // Prepare Original Base64 Data (Default)
+        $originalFileData = file_get_contents($originalFullPath);
+        $originalBase64Data = base64_encode($originalFileData);
+        $originalDocumentBody = "data:application/pdf;base64," . $originalBase64Data;
 
         // Get active customers for this publication
         $customers = $publication->customers()->where('customers.status', 1)->get();
@@ -107,6 +91,48 @@ class CopyController extends Controller
             if (!empty($customer->whatsapp_number)) {
                 $caption = $ultraMsgService->getDailyPaperCaption($customer->first_name);
                 
+                // Determine Document Body (Personalized vs Original)
+                $documentBodyToSend = $originalDocumentBody;
+                $filenameToSend = $filename;
+                $tempPersonalizedPath = null;
+
+                if ($request->has('watermark') && $request->watermark == '1') {
+                    try {
+                        // Personalized Watermark Text
+                        $watermarkText = $customer->first_name . ' ' . $customer->last_name;
+                        
+                        // Output name for this customer (avoid collision)
+                        $personalizedFilename = "{$customer->id}_" . time(); // SDK appends extension usually, but let's be safe. 
+                        // Actually setOutputFilename expects name, SDK handles extension? Checking Task.php... 
+                        // setOutputFilename($filename) sets $this->output_filename. 
+                        // If I don't give extension, iLovePDF might add it. Let's provide it to be safe if SDK allows.
+                        // Wait, previous code used time() . "pdf".
+                        
+                        $personalizedFilename = "{$customer->id}_" . time();
+                        $outputDir = public_path($folder); // Re-added missing definition
+
+                        \Illuminate\Support\Facades\Log::info("Watermarking for Customer {$customer->id}. OutputDir: $outputDir, Filename: $personalizedFilename");
+
+                        // Add watermark
+                        $newPath = $watermarkService->addWatermark($originalFullPath, $watermarkText, $outputDir, $personalizedFilename);
+                        
+                        if ($newPath && file_exists($newPath)) {
+                            // Convert personalized file to base64
+                            $pData = file_get_contents($newPath);
+                            $pBase64 = base64_encode($pData);
+                            $documentBodyToSend = "data:application/pdf;base64," . $pBase64;
+                            $tempPersonalizedPath = $newPath;
+                            
+                            // Optional: Use personalized filename in WhatsApp? 
+                            // Usually keeping original filename is better for user experience, 
+                            // but we can change it if needed. Let's keep original filename.
+                        }
+                    } catch (\Exception $e) {
+                        \Illuminate\Support\Facades\Log::error("Watermarking failed for customer {$customer->id}: " . $e->getMessage());
+                        // Fallback to original document
+                    }
+                }
+
                 // Get copy count, default to 1 if 0 or null
                 $copyCount = $customer->pivot->attachment_count ?? 1;
                 if ($copyCount < 1) $copyCount = 1;
@@ -115,8 +141,8 @@ class CopyController extends Controller
                     // Send via UltraMsg
                     $ultraMsgService->sendDocument(
                         $customer->whatsapp_number,
-                        $documentBody,
-                        $filename,
+                        $documentBodyToSend,
+                        $filenameToSend,
                         $caption
                     );
 
@@ -129,6 +155,14 @@ class CopyController extends Controller
                     
                     $sentCount++;
                 }
+
+                // Clean up personalized file to save space
+                if ($tempPersonalizedPath && file_exists($tempPersonalizedPath)) {
+                     // Adding a small delay or check might be good, but synchronous tasks usually safe to delete.
+                     // However, file_get_contents reads it into memory, so we can delete.
+                     @unlink($tempPersonalizedPath);
+                }
+
             } else {
                  \Illuminate\Support\Facades\Log::warning("UploadStore: Customer {$customer->id} has no WhatsApp number.");
             }

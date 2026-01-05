@@ -28,7 +28,7 @@ class WatermarkService
      * @param string $outputDir Directory to save the output file
      * @return string|null Path to the watermarked file, or null on failure
      */
-    public function addWatermark($inputPath, $watermarkText, $outputDir)
+    public function addWatermark($inputPath, $watermarkText, $outputDir, $outputFilename = null)
     {
         if (!$this->ilovepdf) {
             Log::error('WatermarkService: iLovePDF keys not configured.');
@@ -52,6 +52,10 @@ class WatermarkService
             $task->setFontFamily('Arial');
             $task->setFontSize(50);
             $task->setLayer('above');
+            
+            if ($outputFilename) {
+                $task->setOutputFilename($outputFilename);
+            }
             
             $task->execute();
 
