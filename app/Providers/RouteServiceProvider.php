@@ -24,16 +24,34 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Enhanced API rate limiting with tiered limits
         RateLimiter::for('api', function (Request $request) {
-            return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
+            // Authenticated users: 100 requests per minute per user
+            // Unauthenticated: 30 requests per minute per IP
+            return $request->user()
+                ? Limit::perMinute(100)->by($request->user()->id)->response(function () {
+                    return response()->json(['message' => 'Too many requests. Please slow down.'], 429);
+                })
+                : Limit::perMinute(30)->by($request->ip())->response(function () {
+                    return response()->json(['message' => 'Too many requests. Please slow down.'], 429);
+                });
         });
 
+        // Strict rate limiting for sensitive write operations
+        RateLimiter::for('api-writes', function (Request $request) {
+            return $request->user()
+                ? Limit::perMinute(50)->by($request->user()->id)
+                : Limit::perMinute(10)->by($request->ip());
+        });
+
+        // Login attempts - strict limiting
         RateLimiter::for('login', function (Request $request) {
             return Limit::perMinute(10)->by(
                 strtolower((string) $request->input('email')).'|'.$request->ip()
             );
         });
 
+        // Password reset - very strict limiting
         RateLimiter::for('password-reset', function (Request $request) {
             return Limit::perMinute(5)->by(
                 strtolower((string) $request->input('email')).'|'.$request->ip()
