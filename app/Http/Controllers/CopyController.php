@@ -47,7 +47,7 @@ class CopyController extends Controller
         return view('copies.upload', compact('customers', 'publications'));
     }
 
-    public function uploadStore(Request $request, \App\Services\UltraMsgService $ultraMsgService)
+    public function uploadStore(Request $request, \App\Services\UltraMsgService $ultraMsgService, \App\Services\WatermarkService $watermarkService)
     {
         $request->validate([
             'customer_id'    => 'nullable',
@@ -55,6 +55,9 @@ class CopyController extends Controller
             'file'           => 'required|file',
             'message'        => 'nullable|string'
         ]);
+
+        /* BULK SEND LOGIC - Move up to get Publication Name for Watermark if needed */
+        $publication = Publication::findOrFail($request->publication_id);
 
         /* FILE UPLOAD */
         $file = $request->file('file');
@@ -66,16 +69,35 @@ class CopyController extends Controller
 
         $file->move(public_path($folder), $filename);
         
-        // Prepare Base64 Data for UltraMsg (Avoids localhost public URL issue)
         $fullPath = public_path($folder . '/' . $filename);
+
+        // Apply Watermark if requested
+        if ($request->has('watermark') && $request->watermark == '1') {
+            try {
+                // Use Publication Name or default text
+                $watermarkText = $publication->name ?? 'e-Paper';
+                
+                // Add watermark - this might overwrite or create new file
+                // We pass the folder as output. SDK likely keeps filename.
+                $newPath = $watermarkService->addWatermark($fullPath, $watermarkText, public_path($folder));
+                
+                if ($newPath && file_exists($newPath)) {
+                    $fullPath = $newPath;
+                    $filename = basename($fullPath);
+                }
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::error("Watermarking failed: " . $e->getMessage());
+                // Proceed with original file or fail? Proceeding seems safer to not break flow, but maybe notify?
+            }
+        }
+
+        // Prepare Base64 Data for UltraMsg (Avoids localhost public URL issue)
         $fileData = file_get_contents($fullPath);
         $base64Data = base64_encode($fileData);
         // Assuming PDF properly
         $documentBody = "data:application/pdf;base64," . $base64Data;
 
-        /* BULK SEND LOGIC */
         // Get active customers for this publication
-        $publication = Publication::findOrFail($request->publication_id);
         $customers = $publication->customers()->where('customers.status', 1)->get();
 
         \Illuminate\Support\Facades\Log::info("UploadStore: Found " . $customers->count() . " active customers for publication " . $request->publication_id);
