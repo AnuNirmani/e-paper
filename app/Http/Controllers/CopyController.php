@@ -83,19 +83,21 @@ class CopyController extends Controller
         $sentCount = 0;
         foreach ($customers as $customer) {
             if (!empty($customer->whatsapp_number)) {
+                $caption = "Hello " . $customer->first_name . ", this is today paper";
+
                 // Send via UltraMsg
                 $ultraMsgService->sendDocument(
                     $customer->whatsapp_number,
                     $documentBody,
                     $filename,
-                    $request->message
+                    $caption
                 );
 
                 // Create Copy Record for each customer
                 Copy::createCopy([
                     'customer_id'    => $customer->id,
                     'publication_id' => $request->publication_id,
-                    'message'        => $request->message
+                    'message'        => $caption
                 ]);
                 
                 $sentCount++;
