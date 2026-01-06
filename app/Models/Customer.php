@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 
 class Customer extends Model
 {
@@ -61,7 +62,9 @@ class Customer extends Model
     // Get active customer count
     public static function getActiveCount()
     {
-        return self::where('status', 1)->count();
+        return self::where('status', 1)
+            ->whereNull('deleted_at')
+            ->count();
     }
 
     // Activate all customers
@@ -85,7 +88,9 @@ class Customer extends Model
     // Get only active customers
     public static function getActiveCustomers()
     {
-        return self::where('status', 1)->get();
+        return self::where('status', 1)
+            ->whereNull('deleted_at')
+            ->get();
         return DB::table('customers')
         ->where('status', 1)
         ->select('id', 'first_name')
@@ -149,7 +154,10 @@ class Customer extends Model
     // Delete customer
     public static function deleteCustomer($id)
     {
-        return self::where('id', $id)->delete();
+        return self::where('id', $id)->update([
+            'status' => -1,
+            'deleted_at' => Carbon::now(),
+        ]);
     }
 
     // Change customer status

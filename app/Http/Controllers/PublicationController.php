@@ -9,7 +9,9 @@ class PublicationController extends Controller
 {
     public function index()
     {
-        $publications = Publication::orderBy('id', 'desc')->paginate(10);
+        $publications = Publication::where('status', '!=', -1)
+            ->orderBy('id', 'desc')
+            ->paginate(10);
         return view('publications.index', compact('publications'));
     }
 
@@ -67,7 +69,7 @@ class PublicationController extends Controller
     public function destroy($id)
     {
         $publication = Publication::findOrFail($id);
-        $publication->delete();
+        Publication::softDeletePublication($publication->id);
 
         return redirect()->route('publications.index')
             ->with('success', 'Publication deleted successfully');

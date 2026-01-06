@@ -11,6 +11,7 @@ class CustomerController extends Controller
     public function index()
     {
         $customers = Customer::search(request('search'))
+            ->where('status', '!=', -1) // keep soft-deleted customers hidden
             ->orderBy('id', 'desc')
             ->paginate(10);
         $activeCount = Customer::getActiveCount();
