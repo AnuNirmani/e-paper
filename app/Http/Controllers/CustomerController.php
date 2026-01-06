@@ -18,7 +18,9 @@ class CustomerController extends Controller
 
         // Get all publications and their active account counts
         $publicationStats = [];
-        $publications = \App\Models\Publication::orderBy('name')->get();
+        $publications = \App\Models\Publication::where('status', '!=', -1)
+            ->orderBy('name')
+            ->get();
         foreach ($publications as $publication) {
             $activeAccounts = $publication->customers()->where('status', 1)->count();
             $publicationStats[] = [
@@ -43,7 +45,7 @@ class CustomerController extends Controller
             'last_name'       => 'required|string|max:255',
             'phone'           => 'required|string|max:255',
             'whatsapp_number' => 'required|string|max:255',
-            'email'           => 'required|email|unique:customers,email',
+            'email'           => 'email:rfc,dns|unique:customers,email',
             'starting_date'   => 'required|date',
             'ending_date'     => 'required|date|after_or_equal:starting_date',
             'country'         => 'required|string|max:255',
@@ -104,7 +106,7 @@ class CustomerController extends Controller
             'last_name'       => 'required|string|max:255',
             'phone'           => 'required|string|max:255',
             'whatsapp_number' => 'required|string|max:255',
-            'email'           => 'required|email|unique:customers,email,' . $id . ',id',
+            'email'           => 'required|email:rfc,dns|unique:customers,email,' . $id . ',id',
             'starting_date'   => 'required|date',
             'ending_date'     => 'required|date|after_or_equal:starting_date',
             'country'         => 'required|string|max:255',

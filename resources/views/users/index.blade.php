@@ -90,10 +90,9 @@
                     </tbody>
                 </table>
             </div>
-        </div>
-
-        <div class="mt-4">
-            {{ $users->links() }}
+            <div class="px-6 py-4 bg-gray-50 border-t border-gray-200">
+                {{ $users->links() }}
+            </div>
         </div>
     </div>
 </x-app-layout>

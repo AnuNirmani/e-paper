@@ -25,11 +25,11 @@
                 </div>
             @endif
 
-            <form method="POST" action="{{ route('users.store') }}" class="space-y-5">
+            <form method="POST" action="{{ route('users.store') }}" class="space-y-5" novalidate>
                 @csrf
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Name</label>
-                    <input name="name" value="{{ old('name') }}" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('name') border-red-500 ring-2 ring-red-200 @enderror" placeholder="Full name">
+                    <input name="name" inputmode="text" pattern="[A-Za-z\s]*" oninput="this.value=this.value.replace(/[^A-Za-z\s]/g,'');" value="{{ old('name') }}" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('name') border-red-500 ring-2 ring-red-200 @enderror" placeholder="Full name">
                     @error('name')
                         <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
                     @enderror
