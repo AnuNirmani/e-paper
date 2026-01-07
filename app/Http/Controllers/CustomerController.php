@@ -5,15 +5,31 @@ namespace App\Http\Controllers;
 use App\Models\Customer;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Carbon\Carbon;
 
 class CustomerController extends Controller
 {
     public function index()
     {
-        $customers = Customer::search(request('search'))
-            ->where('status', '!=', -1) // keep soft-deleted customers hidden
-            ->orderBy('id', 'desc')
-            ->paginate(10);
+        $sort = request('sort');
+
+        $customerQuery = Customer::search(request('search'))
+            ->where('status', '!=', -1); // keep soft-deleted customers hidden
+
+        if ($sort === 'ending_today') {
+            $today = Carbon::today();
+            // Push rows with today's ending_date to the top, then sort by nearest ending_date
+            $customerQuery->orderByRaw('DATE(ending_date) = ? DESC', [$today->toDateString()])
+                ->orderBy('ending_date', 'asc')
+                ->orderBy('id', 'desc');
+        } elseif ($sort === 'id') {
+            // Explicit id sort (latest first)
+            $customerQuery->orderBy('id', 'desc');
+        } else {
+            $customerQuery->orderBy('id', 'desc');
+        }
+
+        $customers = $customerQuery->paginate(10)->withQueryString();
         $activeCount = Customer::getActiveCount();
 
         // Get all publications and their active account counts

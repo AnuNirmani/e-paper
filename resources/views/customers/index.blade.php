@@ -54,6 +54,22 @@
                         </svg>
                         Add Customer
                     </a>
+                    @php($endingSortActive = request('sort') === 'ending_today')
+                    <a href="{{ route('customers.index', array_merge(request()->query(), ['sort' => 'ending_today'])) }}"
+                       class="inline-flex items-center font-semibold px-5 py-3 rounded-lg border transition-all duration-200 {{ $endingSortActive ? 'bg-indigo-600 text-white border-indigo-600 hover:bg-indigo-700 hover:border-indigo-700 shadow-md' : 'bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border-indigo-200 hover:border-indigo-300' }}">
+                        <svg class="w-5 h-5 mr-2 {{ $endingSortActive ? 'text-white' : 'text-indigo-600' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10m-12 6h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                        </svg>
+                        Sort By Ending Date
+                    </a>
+                    @php($endingSortActive = request('sort') === 'id')
+                    <a href="{{ route('customers.index', array_merge(request()->query(), ['sort' => 'id'])) }}"
+                       class="inline-flex items-center font-semibold px-5 py-3 rounded-lg border transition-all duration-200 {{ $endingSortActive ? 'bg-indigo-600 text-white border-indigo-600 hover:bg-indigo-700 hover:border-indigo-700 shadow-md' : 'bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border-indigo-200 hover:border-indigo-300' }}">
+                        <svg class="w-5 h-5 mr-2 {{ $endingSortActive ? 'text-white' : 'text-indigo-600' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10m-12 6h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                        </svg>
+                        Sort By Id
+                    </a>
                     <form action="{{ route('customers.activateAll') }}" method="POST" class="inline">
                         @csrf
                         <button type="submit" class="inline-flex items-center bg-green-50 hover:bg-green-100 text-green-700 font-semibold px-5 py-3 rounded-lg border border-green-200 hover:border-green-300 transition-all duration-200">
@@ -76,6 +92,7 @@
 
                 <!-- Search Form -->
                 <form method="GET" action="" class="flex gap-2 w-full lg:w-auto">
+                    <input type="hidden" name="sort" value="{{ request('sort') }}">
                     <div class="relative flex-1 lg:w-80">
                         <input type="text" name="search" placeholder="Search customers..." value="{{ request('search') }}" class="w-full border border-gray-300 rounded-lg pl-10 pr-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" />
                         <svg class="w-5 h-5 text-gray-400 absolute left-3 top-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -49,6 +49,9 @@ class CopyController extends Controller
 
     public function uploadStore(Request $request, \App\Services\UltraMsgService $ultraMsgService, \App\Services\WatermarkService $watermarkService)
     {
+        set_time_limit(0); // Unlimited execution time for large uploads and multiple API calls
+        ini_set('memory_limit', '512M'); // Increase memory limit for file processing
+
         $request->validate([
             'customer_id'    => 'nullable',
             'publication_id' => 'required',
@@ -99,7 +102,10 @@ class CopyController extends Controller
                 if ($request->has('watermark') && $request->watermark == '1') {
                     try {
                         // Personalized Watermark Text
-                        $watermarkText = $customer->first_name . ' ' . $customer->last_name;
+                        $watermarkText = $customer->first_name . ' ' . $customer->last_name . " copy ";
+
+
+
                         
                         // Output name for this customer (avoid collision)
                         $personalizedFilename = "{$customer->id}_" . time(); // SDK appends extension usually, but let's be safe. 

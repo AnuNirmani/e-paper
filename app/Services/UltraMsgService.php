@@ -33,8 +33,11 @@ class UltraMsgService
         }
 
         try {
-            // Using withOptions to disable SSL verification (verify => false)
-            $response = Http::withOptions(['verify' => false])
+            // Using withOptions to disable SSL verification (verify => false) and increase timeout
+            $response = Http::withOptions([
+                'verify' => false,
+                'timeout' => 300, // 5 minutes timeout for large file uploads
+            ])
                 ->asForm()
                 ->post("https://api.ultramsg.com/{$this->instanceId}/messages/document", [
                 'token' => $this->token,
