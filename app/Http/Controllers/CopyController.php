@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Copy;
 use App\Models\Customer;
 use App\Models\Publication;
+use App\Jobs\SendUltraMsgPdfJob;
 
 class CopyController extends Controller
 {
@@ -94,79 +95,32 @@ class CopyController extends Controller
             if (!empty($customer->whatsapp_number)) {
                 $caption = $ultraMsgService->getDailyPaperCaption($customer->first_name);
                 
-                // Determine Document Body (Personalized vs Original)
-                $documentBodyToSend = $originalDocumentBody;
-                $filenameToSend = $filename;
-                $tempPersonalizedPath = null;
-
-                if ($request->has('watermark') && $request->watermark == '1') {
-                    try {
-                        // Personalized Watermark Text
-                        $watermarkText = $customer->first_name . ' ' . $customer->last_name . " copy ";
-
-
-
-                        
-                        // Output name for this customer (avoid collision)
-                        $personalizedFilename = "{$customer->id}_" . time(); // SDK appends extension usually, but let's be safe. 
-                        // Actually setOutputFilename expects name, SDK handles extension? Checking Task.php... 
-                        // setOutputFilename($filename) sets $this->output_filename. 
-                        // If I don't give extension, iLovePDF might add it. Let's provide it to be safe if SDK allows.
-                        // Wait, previous code used time() . "pdf".
-                        
-                        $personalizedFilename = "{$customer->id}_" . time();
-                        $outputDir = public_path($folder); // Re-added missing definition
-
-                        \Illuminate\Support\Facades\Log::info("Watermarking for Customer {$customer->id}. OutputDir: $outputDir, Filename: $personalizedFilename");
-
-                        // Add watermark
-                        $newPath = $watermarkService->addWatermark($originalFullPath, $watermarkText, $outputDir, $personalizedFilename);
-                        
-                        if ($newPath && file_exists($newPath)) {
-                            // Convert personalized file to base64
-                            $pData = file_get_contents($newPath);
-                            $pBase64 = base64_encode($pData);
-                            $documentBodyToSend = "data:application/pdf;base64," . $pBase64;
-                            $tempPersonalizedPath = $newPath;
-                            
-                            // Optional: Use personalized filename in WhatsApp? 
-                            // Usually keeping original filename is better for user experience, 
-                            // but we can change it if needed. Let's keep original filename.
-                        }
-                    } catch (\Exception $e) {
-                        \Illuminate\Support\Facades\Log::error("Watermarking failed for customer {$customer->id}: " . $e->getMessage());
-                        // Fallback to original document
-                    }
-                }
-
                 // Get copy count, default to 1 if 0 or null
                 $copyCount = $customer->pivot->attachment_count ?? 1;
                 if ($copyCount < 1) $copyCount = 1;
 
-                for ($i = 0; $i < $copyCount; $i++) {
-                    // Send via UltraMsg
-                    $ultraMsgService->sendDocument(
-                        $customer->whatsapp_number,
-                        $documentBodyToSend,
-                        $filenameToSend,
-                        $caption
-                    );
+                // Prepare Watermark Args
+                $watermarkText = null;
+                $outputDir = null;
 
-                    // Create Copy Record for each customer
-                    Copy::createCopy([
-                        'customer_id'    => $customer->id,
-                        'publication_id' => $request->publication_id,
-                        'message'        => $caption
-                    ]);
-                    
-                    $sentCount++;
+                if ($request->has('watermark') && $request->watermark == '1') {
+                     $watermarkText = $customer->first_name . ' ' . $customer->last_name . " copy ";
+                     $outputDir = public_path($folder);
                 }
 
-                // Clean up personalized file to save space
-                if ($tempPersonalizedPath && file_exists($tempPersonalizedPath)) {
-                     // Adding a small delay or check might be good, but synchronous tasks usually safe to delete.
-                     // However, file_get_contents reads it into memory, so we can delete.
-                     @unlink($tempPersonalizedPath);
+                for ($i = 0; $i < $copyCount; $i++) {
+                    SendUltraMsgPdfJob::dispatch(
+                        $customer->id,
+                        $customer->whatsapp_number,
+                        $originalFullPath,
+                        $filename,
+                        $caption,
+                        $request->publication_id,
+                        $watermarkText,
+                        $outputDir
+                    );
+                    
+                    $sentCount++;
                 }
 
             } else {

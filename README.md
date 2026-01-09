@@ -11,14 +11,6 @@ A modern admin dashboard for managing digital publications, customers, and subsc
 - **Dashboard**: Real-time statistics and quick actions
 - **Modern UI**: Professional gradient design with responsive layout
 
-## 🛠 Tech Stack
-
-- Laravel 10.50.0 | PHP 8.2.12
-- MySQL Database
-- Blade Templates + Tailwind CSS
-- Vite Build Tool
-- WhatsApp API Integration (UltraMsg)
-
 ## 📦 Quick Start
 
 ### Prerequisites
@@ -51,8 +43,6 @@ A modern admin dashboard for managing digital publications, customers, and subsc
    php artisan serve
    ```
 
-Access at `http://localhost:8000`
-
 ## 📁 Main Modules
 
 | Module | Purpose |
@@ -61,12 +51,6 @@ Access at `http://localhost:8000`
 | **Publications** | Create and manage publications |
 | **Copies** | Track distributed publication copies |
 | **Dashboard** | System statistics and quick actions |
-
-## 🗄️ Database Tables
-
-- **customers**: Customer info, subscription dates, payment details
-- **publications**: Publication data with status
-- **copies**: Links customers to publications with distribution dates
 
 ## 🔐 Authentication
 

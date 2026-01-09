@@ -74,6 +74,7 @@
                             <tr class="border-b-2 border-gray-200">
                                 <th class="px-6 py-4 text-left text-sm font-extrabold text-gray-700">Customer</th>
                                 <th class="px-6 py-4 text-left text-sm font-extrabold text-gray-700">Publication</th>
+                                <th class="px-6 py-4 text-left text-sm font-extrabold text-gray-700">Time</th>
                                 <!-- <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Message</th> -->
                                 <th class="px-6 py-4 text-left text-sm font-extrabold text-gray-700">Actions</th>
                             </tr>
@@ -124,6 +125,9 @@
                                             <p class="text-sm text-gray-900">{{ $copy->publication_name }}</p>
                                         </div>
                                     </div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="text-sm text-gray-900">{{ \Carbon\Carbon::parse($copy->created_at)->format('H:i:s') }}</div>
                                 </td>
                                 <!-- <td class="px-6 py-4">
                                     <span class="inline-block max-w-xs text-sm text-gray-600 truncate" title="{{ $copy->message ?? '-' }}">
