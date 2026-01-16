@@ -113,12 +113,12 @@
                 <p class="text-xs text-gray-500 mt-1">Above: watermark appears on top of content | Below: watermark appears behind content</p>
             </div>
 
-            <!-- Preview Section -->
+                <!-- Preview Section -->
             <div class="bg-gray-100 rounded-lg p-6 mt-8">
                 <h3 class="text-lg font-semibold text-gray-900 mb-4">Preview</h3>
-                <div class="bg-white border-2 border-dashed border-gray-300 rounded p-8 h-40 flex items-center justify-center relative overflow-hidden" id="preview">
-                    <div style="transform: rotate(0deg); opacity: 0.3;" id="preview-text" class="text-center pointer-events-none">
-                        <p class="font-sans text-4xl font-bold text-gray-400">Sample Watermark</p>
+                <div class="bg-white border-2 border-dashed border-gray-300 rounded p-8 h-64 flex items-center justify-center relative overflow-hidden" id="preview">
+                    <div id="preview-text" class="text-center pointer-events-none" style="transform: rotate(0deg); opacity: 0.3; font-family: Arial;">
+                        <p class="font-bold text-gray-400 m-0">Sample Watermark</p>
                     </div>
                 </div>
             </div>
@@ -141,23 +141,53 @@
     const rotationInput = document.getElementById('rotation');
     const rotationValue = document.getElementById('rotation-value');
     const previewText = document.getElementById('preview-text');
+    const preview = document.getElementById('preview');
     const fontSizeInput = document.getElementById('font_size');
     const fontSizeValue = document.getElementById('font_size-value');
     const transparencyInput = document.getElementById('transparency');
     const transparencyValue = document.getElementById('transparency-value');
     const fontFamilyInput = document.getElementById('font_family');
+    const verticalPositionInput = document.getElementById('vertical_position');
+    const horizontalPositionInput = document.getElementById('horizontal_position');
+
+    // Map position values to CSS alignment
+    function getVerticalAlignment(position) {
+        switch(position) {
+            case 'top': return 'flex-start';
+            case 'middle': return 'center';
+            case 'bottom': return 'flex-end';
+            default: return 'center';
+        }
+    }
+
+    function getHorizontalAlignment(position) {
+        switch(position) {
+            case 'left': return 'flex-start';
+            case 'center': return 'center';
+            case 'right': return 'flex-end';
+            default: return 'center';
+        }
+    }
 
     function updatePreview() {
         const rotation = rotationInput.value;
         const fontSize = fontSizeInput.value;
         const transparency = transparencyInput.value;
         const fontFamily = fontFamilyInput.value;
+        const verticalPosition = verticalPositionInput.value;
+        const horizontalPosition = horizontalPositionInput.value;
 
+        // Update text styles
         previewText.style.transform = `rotate(${rotation}deg)`;
         previewText.style.opacity = (100 - transparency) / 100;
         previewText.style.fontSize = (fontSize / 40) * 32 + 'px';
-        previewText.style.fontFamily = fontFamily;
+        previewText.style.fontFamily = fontFamily + ', sans-serif';
 
+        // Update preview container alignment
+        preview.style.justifyContent = getHorizontalAlignment(horizontalPosition);
+        preview.style.alignItems = getVerticalAlignment(verticalPosition);
+
+        // Update display values
         rotationValue.textContent = rotation + '°';
         fontSizeValue.textContent = fontSize;
         transparencyValue.textContent = transparency + '%';
@@ -167,6 +197,8 @@
     fontSizeInput.addEventListener('input', updatePreview);
     transparencyInput.addEventListener('input', updatePreview);
     fontFamilyInput.addEventListener('change', updatePreview);
+    verticalPositionInput.addEventListener('change', updatePreview);
+    horizontalPositionInput.addEventListener('change', updatePreview);
 
     // Initialize preview
     updatePreview();
