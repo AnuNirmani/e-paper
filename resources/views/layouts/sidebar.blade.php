@@ -43,7 +43,14 @@
                 class="block px-4 py-2 hover:bg-gray-700">
                 Upload Copy
                 </a>
+            </li>
 
+            <li>
+                <a href="{{ route('settings.watermark') }}"
+                class="block px-4 py-2 hover:bg-gray-700">
+                Watermark Settings
+                </a>
+            </li>
         </ul>
     </div>
     <div class="p-4">

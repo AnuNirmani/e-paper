@@ -28,6 +28,7 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('manage-customers', fn (User $user): bool => $this->isAdminEmail($user));
         Gate::define('manage-publications', fn (User $user): bool => $this->isAdminEmail($user));
         Gate::define('manage-copies', fn (User $user): bool => $this->isAdminEmail($user));
+        Gate::define('manage-settings', fn (User $user): bool => $this->isAdminEmail($user));
     }
 
     private function isAdminEmail(User $user): bool
