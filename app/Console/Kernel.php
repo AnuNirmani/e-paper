@@ -12,7 +12,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // $schedule->command('inspire')->hourly();
+        // Delete sent copies older than 7 days daily at 2 AM
+        $schedule->command('copies:delete-old')->dailyAt('02:00');
     }
 
     /**

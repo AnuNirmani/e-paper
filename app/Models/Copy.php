@@ -12,7 +12,8 @@ class Copy extends Model
     protected $fillable = [
         'customer_id',
         'publication_id',
-        'message'
+        'message',
+        'sent_at'
     ];
 
     /* =========================
@@ -39,6 +40,7 @@ class Copy extends Model
             'customer_id'    => $data['customer_id'],
             'publication_id' => $data['publication_id'],
             'message'        => $data['message'] ?? null,
+            'sent_at'        => $data['sent_at'] ?? now(),
             'created_at'     => now(),
             'updated_at'     => now(),
         ]);
