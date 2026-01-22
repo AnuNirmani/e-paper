@@ -155,17 +155,15 @@
                             <!-- Status Column -->
                             <td class="px-6 py-4">
                                 <span id="status-display-{{ $publication->id }}" @if($editError) style="display:none;" @endif>
-                                    @if ($publication->status == 1)
-                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">
-                                            <span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-                                            Active
+                                    <label class="flex items-center cursor-pointer">
+                                        <input type="checkbox" 
+                                               {{ $publication->status == 1 ? 'checked' : '' }} 
+                                               onchange="togglePublicationStatus({{ $publication->id }})"
+                                               class="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-2 focus:ring-green-500 cursor-pointer">
+                                        <span class="ml-2 text-xs font-semibold {{ $publication->status == 1 ? 'text-green-800' : 'text-gray-800' }}">
+                                            {{ $publication->status == 1 ? 'Active' : 'Inactive' }}
                                         </span>
-                                    @else
-                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-800">
-                                            <span class="w-2 h-2 bg-gray-500 rounded-full mr-2"></span>
-                                            Inactive
-                                        </span>
-                                    @endif
+                                    </label>
                                 </span>
                                 <span id="status-edit-{{ $publication->id }}" class="@if(!$editError) hidden @endif">
                                     <select name="status" class="border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent @if($editError && $errors->has('status')) border-red-500 ring-2 ring-red-200 @endif">
@@ -263,6 +261,25 @@
         }
         function submitEdit(id) {
             document.getElementById('edit-form-' + id).submit();
+        }
+        function togglePublicationStatus(publicationId) {
+            fetch(`/publications/${publicationId}/toggle-status`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to update status');
+            });
         }
     </script>
 </x-app-layout>

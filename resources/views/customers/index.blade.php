@@ -142,16 +142,16 @@
                                 <div class="text-sm text-gray-900">{{ $customer->whatsapp_number }}</div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                @if($customer->status == 1)
-                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">
-                                        <span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-                                        Active
-                                    </span>
-                                @elseif($customer->status == 0)
-                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-800">
-                                        <span class="w-2 h-2 bg-gray-500 rounded-full mr-2"></span>
-                                        Inactive
-                                    </span>
+                                @if($customer->status != -1)
+                                    <label class="flex items-center cursor-pointer">
+                                        <input type="checkbox" 
+                                               {{ $customer->status == 1 ? 'checked' : '' }} 
+                                               onchange="toggleCustomerStatus({{ $customer->id }})"
+                                               class="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-2 focus:ring-green-500 cursor-pointer">
+                                        <span class="ml-2 text-xs font-semibold {{ $customer->status == 1 ? 'text-green-800' : 'text-gray-800' }}">
+                                            {{ $customer->status == 1 ? 'Active' : 'Inactive' }}
+                                        </span>
+                                    </label>
                                 @else
                                     <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-800">
                                         <span class="w-2 h-2 bg-red-500 rounded-full mr-2"></span>
@@ -216,4 +216,26 @@
             </div>
         </div>
     </div>
+
+    <script>
+        function toggleCustomerStatus(customerId) {
+            fetch(`/customers/${customerId}/toggle-status`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to update status');
+            });
+        }
+    </script>
 </x-app-layout>

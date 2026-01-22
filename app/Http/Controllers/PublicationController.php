@@ -74,4 +74,16 @@ class PublicationController extends Controller
         return redirect()->route('publications.index')
             ->with('success', 'Publication deleted successfully');
     }
+
+    public function toggleStatus($id)
+    {
+        $publication = Publication::findOrFail($id);
+        $publication->update(['status' => $publication->status == 1 ? 0 : 1]);
+        
+        return response()->json([
+            'success' => true,
+            'status' => $publication->status,
+            'message' => $publication->status == 1 ? 'Publication activated' : 'Publication deactivated'
+        ]);
+    }
 }

@@ -178,5 +178,17 @@ class CustomerController extends Controller
         Customer::deactivateAll();
         return redirect()->route('customers.index')->with('success', 'All customers deactivated.');
     }
+
+    public function toggleStatus($id)
+    {
+        $customer = Customer::findOrFail($id);
+        $customer->update(['status' => $customer->status == 1 ? 0 : 1]);
+        
+        return response()->json([
+            'success' => true,
+            'status' => $customer->status,
+            'message' => $customer->status == 1 ? 'Customer activated' : 'Customer deactivated'
+        ]);
+    }
 }
 

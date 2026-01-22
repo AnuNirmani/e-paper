@@ -39,6 +39,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::middleware('can:manage-customers')->group(function () {
         Route::post('/customers/activate-all', [CustomerController::class, 'activateAll'])->name('customers.activateAll');
         Route::post('/customers/deactivate-all', [CustomerController::class, 'deactivateAll'])->name('customers.deactivateAll');
+        Route::patch('/customers/{id}/toggle-status', [CustomerController::class, 'toggleStatus'])->name('customers.toggleStatus');
         Route::resource('customers', CustomerController::class);
     });
 
@@ -50,6 +51,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/publications/{id}/edit', [PublicationController::class, 'edit'])->name('publications.edit');
         Route::match(['put', 'patch'], '/publications/{id}', [PublicationController::class, 'update'])->name('publications.update');
         Route::delete('/publications/{id}', [PublicationController::class, 'destroy'])->name('publications.destroy');
+        Route::patch('/publications/{id}/toggle-status', [PublicationController::class, 'toggleStatus'])->name('publications.toggleStatus');
     });
 
     Route::middleware('can:manage-copies')->group(function () {
