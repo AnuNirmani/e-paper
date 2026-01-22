@@ -3,14 +3,25 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <!-- Header Section -->
         <div class="mb-8">
-            <h1 class="text-3xl font-bold text-gray-900 mb-2">Customer Management</h1>
-            <p class="text-gray-600">Manage and monitor all your customer accounts</p>
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900 mb-2">Customer Management</h1>
+                    <p class="text-gray-600">Manage and monitor all your customer accounts</p>
+                </div>
+                @if($selectedPublication)
+                    <div class="bg-blue-50 border-2 border-blue-200 rounded-lg px-4 py-2">
+                        <p class="text-sm text-gray-600">Filtered by Publication:</p>
+                        <p class="text-lg font-semibold text-blue-600">{{ $selectedPublication->name }}</p>
+                        <a href="{{ route('customers.index') }}" class="text-sm text-blue-500 hover:text-blue-700 mt-1">Clear Filter</a>
+                    </div>
+                @endif
+            </div>
         </div>
 
         <!-- Statistics Cards -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             <!-- Total Active Accounts Card -->
-            <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg p-6 text-white">
+            <a href="{{ route('customers.index', ['status' => 'active']) }}" class="block bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg p-6 text-white hover:shadow-xl transition-all duration-200">
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-blue-100 text-sm font-medium mb-1">Total Active Accounts</p>
@@ -22,11 +33,11 @@
                         </svg>
                     </div>
                 </div>
-            </div>
+            </a>
 
             <!-- Publication Stats Cards -->
             @foreach($publicationStats as $stat)
-            <div class="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-200 p-6 border border-gray-100">
+            <a href="{{ route('customers.index', ['publication_id' => $stat['id'] ?? null]) }}" class="block bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-200 p-6 border border-gray-100">
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-gray-600 text-sm font-medium mb-1">{{ strtoupper($stat['name']) }}</p>
@@ -39,7 +50,7 @@
                         </svg>
                     </div>
                 </div>
-            </div>
+            </a>
             @endforeach
         </div>
 
@@ -112,13 +123,13 @@
                 <table class="w-full">
                     <thead>
                         <tr class="bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200">
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Name</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Contact</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">WhatsApp</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Status</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Duration</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Ending Date</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Actions</th>
+                            <th class="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">Name</th>
+                            <th class="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">Contact</th>
+                            <th class="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">WhatsApp</th>
+                            <th class="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">Status</th>
+                            <th class="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">Duration</th>
+                            <th class="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">Ending Date</th>
+                            <th class="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">Actions</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200">
@@ -135,13 +146,13 @@
                                     </div>
                                 </div>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-gray-900">{{ $customer->phone }}</div>
+                            <td class="px-6 py-4 whitespace-nowrap text-center">
+                                <div class="text-sm text-gray-900 text-center">{{ $customer->phone }}</div>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-gray-900">{{ $customer->whatsapp_number }}</div>
+                            <td class="px-6 py-4 whitespace-nowrap text-center">
+                                <div class="text-sm text-gray-900 text-center">{{ $customer->whatsapp_number }}</div>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
+                            <td class="px-6 py-4 whitespace-nowrap text-center">
                                 @if($customer->status != -1)
                                     <label class="flex items-center cursor-pointer">
                                         <input type="checkbox" 
@@ -159,16 +170,19 @@
                                     </span>
                                 @endif
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm font-medium text-gray-900">{{ $customer->duration }} 
+                            <td class="px-6 py-4 whitespace-nowrap text-center">
+                                <div class="text-sm font-medium text-gray-900 text-center">{{ $customer->duration }} 
                                     <span class="text-gray-500 text-xs">{{ $customer->duration == 1 ? 'month' : 'months' }}</span>
                                 </div>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-gray-900">{{ $customer->ending_date ? $customer->ending_date->format('Y-m-d') : '' }}</div>
+                            <td class="px-6 py-4 whitespace-nowrap text-center">
+                                <div class="text-sm text-gray-900 text-center">{{ $customer->ending_date ? $customer->ending_date->format('Y-m-d') : '' }}</div>
+                                @if($customer->ending_date)
+                                    <div class="text-xs text-gray-500 text-center">{{ $customer->remaining_text }}</div>
+                                @endif
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                <div class="flex items-center gap-2">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-center">
+                                <div class="flex items-center justify-center gap-2">
                                     <a href="{{ route('customers.show',$customer) }}" class="inline-flex items-center px-3 py-1.5 bg-blue-50 text-blue-700 hover:bg-blue-100 rounded-lg transition-colors duration-150">
                                         <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>

@@ -12,9 +12,22 @@ class CustomerController extends Controller
     public function index()
     {
         $sort = request('sort');
+        $publicationId = request('publication_id');
 
         $customerQuery = Customer::search(request('search'))
             ->where('status', '!=', -1); // keep soft-deleted customers hidden
+
+        // Optional status filter (e.g., status=active)
+        if (request('status') === 'active') {
+            $customerQuery->where('status', 1);
+        }
+
+        // Filter by publication if publication_id is provided
+        if ($publicationId) {
+            $customerQuery->whereHas('publications', function($q) use ($publicationId) {
+                $q->where('publication_id', $publicationId);
+            });
+        }
 
         if ($sort === 'ending_today') {
             $today = Carbon::today();
@@ -40,12 +53,18 @@ class CustomerController extends Controller
         foreach ($publications as $publication) {
             $activeAccounts = $publication->customers()->where('status', 1)->count();
             $publicationStats[] = [
+                'id' => $publication->id,
                 'name' => $publication->name,
                 'active_accounts' => $activeAccounts
             ];
         }
 
-        return view('customers.index', compact('customers', 'activeCount', 'publicationStats'));
+        $selectedPublication = null;
+        if ($publicationId) {
+            $selectedPublication = \App\Models\Publication::find($publicationId);
+        }
+
+        return view('customers.index', compact('customers', 'activeCount', 'publicationStats', 'selectedPublication'));
     }
 
     public function create()
@@ -191,4 +210,3 @@ class CustomerController extends Controller
         ]);
     }
 }
-

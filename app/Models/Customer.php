@@ -168,5 +168,47 @@ class Customer extends Model
         ]);
     }
 
+    // Computed remaining duration until ending_date (years, months, days)
+    public function getRemainingParts(): ?array
+    {
+        if (!$this->ending_date) {
+            return null;
+        }
+
+        $end = $this->ending_date->copy()->startOfDay();
+        $today = Carbon::now()->startOfDay();
+
+        $isFuture = $end->greaterThanOrEqualTo($today);
+        $interval = $isFuture ? $today->diff($end) : $end->diff($today);
+
+        return [
+            'years'  => $interval->y,
+            'months' => $interval->m,
+            'days'   => $interval->d,
+            'future' => $isFuture,
+        ];
+    }
+
+    // Human-readable remaining text accessor
+    public function getRemainingTextAttribute(): string
+    {
+        $parts = $this->getRemainingParts();
+        if ($parts === null) {
+            return '';
+        }
+
+        $segments = [];
+        if ($parts['years'] > 0) {
+            $segments[] = $parts['years'].' '.($parts['years'] === 1 ? 'year' : 'years');
+        }
+        if ($parts['months'] > 0) {
+            $segments[] = $parts['months'].' '.($parts['months'] === 1 ? 'month' : 'months');
+        }
+        // Always include days to make it explicit, even if 0
+        $segments[] = $parts['days'].' '.($parts['days'] === 1 ? 'day' : 'days');
+
+        $text = implode(', ', $segments);
+        return $parts['future'] ? ($text.' remaining') : ('Expired '.$text.' ago');
+    }
 
 }

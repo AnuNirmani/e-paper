@@ -14,7 +14,7 @@
                 <h2 class="text-lg font-semibold text-gray-800 mb-4">Active Accounts Overview</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     <!-- Total Active Accounts -->
-                    <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg p-6 text-white transform hover:scale-105 transition-all duration-200">
+                    <a href="{{ route('customers.index', ['status' => 'active']) }}" class="block bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg p-6 text-white transform hover:scale-105 transition-all duration-200">
                         <div class="flex items-center justify-between mb-4">
                             <div class="bg-white bg-opacity-20 rounded-full p-3">
                                 <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
@@ -24,17 +24,17 @@
                         </div>
                         <h3 class="text-sm font-medium opacity-90 mb-1">Total Active Accounts</h3>
                         <p class="text-4xl font-bold">{{ \App\Models\Customer::where('status', 1)->count() }}</p>
-                    </div>
+                    </a>
 
                     <!-- Dynamic Active Publications -->
                     @foreach(\App\Models\Publication::where('status', 1)->orderBy('name')->get() as $publication)
                         @php
-                            $activeAccountsCount = \App\Models\Copy::where('publication_id', $publication->id)
-                                ->whereHas('customer', function($q) { $q->where('status', 1); })
-                                ->distinct('customer_id')
-                                ->count('customer_id');
+                            // Count active customers linked via the publication-customer pivot
+                            $activeAccountsCount = $publication->customers()
+                                ->where('customers.status', 1)
+                                ->count();
                         @endphp
-                        <div class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-200">
+                        <a href="{{ route('customers.index', ['publication_id' => $publication->id]) }}" class="block bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-200 cursor-pointer transform hover:scale-105">
                             <div class="flex items-center justify-between mb-4">
                                 <h3 class="text-sm font-semibold text-gray-700">{{ $publication->name }}</h3>
                                 <div class="bg-blue-100 rounded-full p-2">
@@ -45,7 +45,7 @@
                             </div>
                             <p class="text-4xl font-bold text-gray-900 mb-2">{{ $activeAccountsCount }}</p>
                             <p class="text-sm text-gray-500">Active Accounts</p>
-                        </div>
+                        </a>
                     @endforeach
                 </div>
             </div>
