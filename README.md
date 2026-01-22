@@ -71,6 +71,7 @@ This project is licensed under the MIT License. See [LICENSE](LICENSE) for detai
 ## Contributing
 
 This is a private project for Wijeya Newspapers Limited. For internal development inquiries, please contact the development team.
+- oanuttara@gmail.com
 
 ## Security Vulnerabilities
 

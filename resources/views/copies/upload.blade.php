@@ -29,12 +29,12 @@
                     <!-- CUSTOMER -->
                     <div class="mb-8">
                         <label class="block text-sm font-semibold text-gray-700 mb-3">Select Customer</label>
-                        <input type="text" id="customer-search-watermark" placeholder="Type to search customer" class="w-full border border-gray-300 rounded-lg px-4 py-2 mb-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition" />
+                        <input type="text" id="customer-search-watermark" placeholder="Type and click below to search customer" class="w-full border border-gray-300 rounded-lg px-4 py-2 mb-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition" />
                         <select name="customer_id" 
                                 id="customer-select-watermark"
                                 class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition" 
                                 >
-                            <option value="">-- Select Customer --</option>
+                            <option value="">All Customers</option>
                             @foreach($customers as $customer)
                                 <option value="{{ $customer->id }}">{{ $customer->first_name }} {{ $customer->last_name }} ({{ $customer->email }})</option>
                             @endforeach
@@ -46,7 +46,7 @@
 
                     <!-- CATEGORY -->
                     <div class="mb-8">
-                        <label class="block text-sm font-semibold text-gray-700 mb-3">Select the category</label>
+                        <label class="block text-sm font-semibold text-gray-700 mb-3">Select Publication</label>
                         <div class="flex flex-wrap gap-4">
                             @foreach($publications as $publication)
                                 <label class="flex items-center bg-gray-50 hover:bg-blue-50 border-2 border-gray-200 hover:border-blue-300 rounded-lg px-4 py-3 cursor-pointer transition">
@@ -65,7 +65,7 @@
 
                     <!-- FILE -->
                     <div class="mb-8">
-                        <label class="block text-sm font-semibold text-gray-700 mb-3">Choose File</label>
+                        <label class="block text-sm font-semibold text-gray-700 mb-3">Choose E-Paper</label>
                         <input type="file"
                                name="file"
                                class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
@@ -89,7 +89,7 @@
 
                     <button type="submit" 
                             class="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold px-8 py-4 rounded-lg hover:from-blue-700 hover:to-blue-800 transform hover:scale-[1.02] transition shadow-lg">
-                        Submit Upload
+                        Send the E-Paper
                     </button>
                 </form>
             </div>
@@ -120,12 +120,12 @@
                     <!-- CUSTOMER -->
                     <div class="mb-8">
                         <label class="block text-sm font-semibold text-gray-700 mb-3">Select Customer</label>
-                        <input type="text" id="customer-search-plain" placeholder="Type to search customer" class="w-full border border-gray-300 rounded-lg px-4 py-2 mb-3 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition" />
+                        <input type="text" id="customer-search-plain" placeholder="Type and click below to search customer" class="w-full border border-gray-300 rounded-lg px-4 py-2 mb-3 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition" />
                         <select name="customer_id" 
                                 id="customer-select-plain"
                                 class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition" 
                                 >
-                            <option value="">-- Select Customer --</option>
+                            <option value="">All Customers</option>
                             @foreach($customers as $customer)
                                 <option value="{{ $customer->id }}">{{ $customer->first_name }} {{ $customer->last_name }} ({{ $customer->email }})</option>
                             @endforeach
@@ -137,7 +137,7 @@
 
                     <!-- CATEGORY -->
                     <div class="mb-8">
-                        <label class="block text-sm font-semibold text-gray-700 mb-3">Select the category</label>
+                        <label class="block text-sm font-semibold text-gray-700 mb-3">Select Publication</label>
                         <div class="flex flex-wrap gap-4">
                             @foreach($publications as $publication)
                                 <label class="flex items-center bg-gray-50 hover:bg-gray-100 border-2 border-gray-200 hover:border-gray-400 rounded-lg px-4 py-3 cursor-pointer transition">
@@ -156,7 +156,7 @@
 
                     <!-- FILE -->
                     <div class="mb-8">
-                        <label class="block text-sm font-semibold text-gray-700 mb-3">Choose File</label>
+                        <label class="block text-sm font-semibold text-gray-700 mb-3">Choose E-Paper</label>
                         <input type="file"
                                name="file"
                                class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-gray-50 file:text-gray-700 hover:file:bg-gray-100"
@@ -180,7 +180,7 @@
 
                     <button type="submit" 
                             class="w-full bg-gradient-to-r from-gray-600 to-gray-700 text-white font-semibold px-8 py-4 rounded-lg hover:from-gray-700 hover:to-gray-800 transform hover:scale-[1.02] transition shadow-lg">
-                        Submit Upload
+                        Send the E-Paper
                     </button>
                 </form>
             </div>
