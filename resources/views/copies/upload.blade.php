@@ -78,15 +78,19 @@
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-3">Choose E-Paper</label>
                     <input type="file"
+                           id="file-input"
                            name="file"
+                           accept=".pdf,application/pdf"
                            class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
                            >
+                    <span id="file-error" class="text-red-500 text-sm mt-1 block hidden"></span>
                     @error('file')
                         <span class="text-red-500 text-sm mt-1 block">{{ $message }}</span>
                     @enderror
                 </div>
 
                 <button type="submit" 
+                        id="submit-button"
                         class="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold px-8 py-4 rounded-lg hover:from-blue-700 hover:to-blue-800 transform hover:scale-[1.02] transition shadow-lg">
                     Send the E-Paper
                 </button>
@@ -125,5 +129,46 @@
         }
 
         attachFilter('customer-search', 'customer-select');
+
+        // File validation
+        const fileInput = document.getElementById('file-input');
+        const fileError = document.getElementById('file-error');
+        const submitButton = document.getElementById('submit-button');
+        const maxSize = 20 * 1024 * 1024; // 20MB in bytes
+
+        fileInput.addEventListener('change', function() {
+            const file = this.files[0];
+            
+            if (!file) {
+                fileError.classList.add('hidden');
+                submitButton.disabled = false;
+                submitButton.classList.remove('opacity-50', 'cursor-not-allowed');
+                return;
+            }
+
+            let errorMsg = '';
+
+            // Check file type
+            if (file.type !== 'application/pdf') {
+                errorMsg = 'Only PDF files are allowed. Please select a PDF file.';
+            }
+            // Check file size
+            else if (file.size > maxSize) {
+                const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
+                errorMsg = `File size (${sizeMB}MB) exceeds the maximum allowed size of 20MB.`;
+            }
+
+            if (errorMsg) {
+                fileError.textContent = errorMsg;
+                fileError.classList.remove('hidden');
+                submitButton.disabled = true;
+                submitButton.classList.add('opacity-50', 'cursor-not-allowed');
+                this.value = ''; // Clear the file input
+            } else {
+                fileError.classList.add('hidden');
+                submitButton.disabled = false;
+                submitButton.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+        });
     })();
 </script>
