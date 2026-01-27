@@ -122,7 +122,7 @@
             <div class="bg-gray-100 rounded-lg p-6 mt-8">
                 <h3 class="text-lg font-semibold text-gray-900 mb-4">Preview</h3>
                 <div class="bg-white border-2 border-dashed border-gray-300 rounded p-8 h-64 flex items-center justify-center relative overflow-hidden" id="preview">
-                    <div id="preview-text" class="text-center pointer-events-none" style="transform: rotate(0deg); opacity: 0.3; font-family: Arial;">
+                        <div id="preview-text" class="text-center pointer-events-none" style="transform: rotate(0deg); opacity: 0.3; font-family: Arial;">
                         <p class="font-bold text-gray-400 m-0">Sample Watermark</p>
                     </div>
                 </div>

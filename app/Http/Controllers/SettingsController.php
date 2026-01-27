@@ -25,17 +25,13 @@ class SettingsController extends Controller
         $horizontalOptions = ['left', 'center', 'right'];
         $fontFamilies = [
             'Arial',
-            'Times New Roman',
-            'Courier',
-            'Helvetica',
-            'Georgia',
-            'Trebuchet MS',
-            'Comic Sans MS',
+            'Arial Unicode MS',
             'Verdana',
-            'Impact',
-            'Palatino',
-            'Garamond',
-            'Bookman'
+            'Courier',
+            'Times New Roman',
+            'Comic Sans MS',
+            'WenQuanYi Zen Hei',
+            'Lohit Marathi'
         ];
         $layerOptions = ['above', 'below'];
 

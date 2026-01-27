@@ -89,6 +89,13 @@ class WatermarkService
             return null;
         }
 
+        Log::info('WatermarkService: Starting watermark process', [
+            'input_path' => $inputPath,
+            'watermark_text' => $watermarkText,
+            'output_dir' => $outputDir,
+            'output_filename' => $outputFilename
+        ]);
+
         try {
             // Get settings - use provided settings or load from cache
             $watermarkSettings = $settings ?? $this->getSettings();
@@ -108,22 +115,42 @@ class WatermarkService
             $task->setTransparency($watermarkSettings['transparency']); // 0-100
             $task->setFontFamily($watermarkSettings['font_family']);
             $task->setFontSize($watermarkSettings['font_size']);
+            $task->setFontColor($watermarkSettings['font_color'] ?? '#000000');
             $task->setLayer($watermarkSettings['layer']);
             
             if ($outputFilename) {
                 $task->setOutputFilename($outputFilename);
+                Log::info('WatermarkService: Set output filename', ['filename' => $outputFilename]);
             }
             
+            Log::info('WatermarkService: Executing task...');
             $task->execute();
+
+            Log::info('WatermarkService: Task executed, downloading result', [
+                'output_dir' => $outputDir
+            ]);
 
             // Download the result
             $task->download($outputDir);
             
+            $finalPath = $outputDir . '/' . $task->outputFileName;
+            Log::info('WatermarkService: Watermark applied successfully', [
+                'output_path' => $finalPath,
+                'output_filename' => $task->outputFileName,
+                'output_dir' => $outputDir,
+                'file_exists' => file_exists($finalPath),
+                'dir_exists' => is_dir($outputDir),
+                'dir_writable' => is_writable($outputDir),
+                'files_in_dir' => count(scandir($outputDir))
+            ]);
+            
             // Return the actual file path saved by the SDK
-            return $outputDir . '/' . $task->outputFileName; 
+            return $finalPath;
 
         } catch (\Exception $e) {
-            Log::error('WatermarkService Error: ' . $e->getMessage());
+            Log::error('WatermarkService Error: ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString()
+            ]);
             return null;
         }
     }

@@ -44,8 +44,15 @@ class SendUltraMsgPdfJob implements ShouldQueue
     {
         $documentBodyToSend = null;
 
+        Log::info("SendUltraMsgPdfJob: Starting job for customer {$this->customerId}", [
+            'watermark_text' => $this->watermarkText,
+            'output_dir' => $this->outputDir,
+            'original_file' => $this->originalFilePath
+        ]);
+
         // Handle Watermarking if requested
         if ($this->watermarkText && $this->outputDir) {
+            Log::info("SendUltraMsgPdfJob: Attempting to add watermark for customer {$this->customerId}");
             try {
                 // Ensure output directory exists (redundant check but safe)
                 if (!file_exists($this->outputDir)) {
@@ -63,12 +70,20 @@ class SendUltraMsgPdfJob implements ShouldQueue
                 );
 
                 if ($newPath && file_exists($newPath)) {
+                    Log::info("SendUltraMsgPdfJob: Watermark added successfully for customer {$this->customerId}", [
+                        'watermarked_file' => $newPath,
+                        'file_size' => filesize($newPath)
+                    ]);
                     // Convert personalized file to base64
                     $pData = file_get_contents($newPath);
                     $documentBodyToSend = "data:application/pdf;base64," . base64_encode($pData);
                     
-                    // Clean up temporary watermarked file
-                    @unlink($newPath);
+                    // Keep the file for debugging - DON'T delete it
+                    // @unlink($newPath);
+                } else {
+                    Log::warning("SendUltraMsgPdfJob: Watermarked file not created for customer {$this->customerId}", [
+                        'returned_path' => $newPath
+                    ]);
                 }
             } catch (\Exception $e) {
                 Log::error("Watermarking failed for customer {$this->customerId} in Job: " . $e->getMessage());
