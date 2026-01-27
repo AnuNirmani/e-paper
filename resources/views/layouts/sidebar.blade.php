@@ -50,6 +50,13 @@
                     Watermark Settings
                 </a>
             </li>
+
+            <li>
+                <a href="{{ route('whatsapp.connect') }}"
+                   class="block px-4 py-2 hover:bg-gray-700 {{ request()->routeIs('whatsapp.*') ? 'bg-gray-700 border-l-4 border-blue-500' : '' }}">
+                    WhatsApp QR
+                </a>
+            </li>
         </ul>
     </div>
     <div class="p-4">

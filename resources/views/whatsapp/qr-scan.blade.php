@@ -1,0 +1,233 @@
+<x-app-layout>
+    <style>
+        .whatsapp-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: calc(100vh - 200px);
+        }
+        .whatsapp-box {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+        }
+        .qr-container {
+            margin: 30px 0;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 8px;
+        }
+        #qr-image {
+            max-width: 300px;
+            height: auto;
+        }
+        .status {
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        .status.connected {
+            background: #d4edda;
+            color: #155724;
+        }
+        .status.disconnected {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .status.loading {
+            background: #fff3cd;
+            color: #856404;
+        }
+        .instructions {
+            text-align: left;
+            margin: 20px 0;
+            padding: 15px;
+            background: #e7f3ff;
+            border-radius: 5px;
+        }
+        .instructions ol {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #25D366;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+
+    <div class="whatsapp-container">
+        <div class="whatsapp-box">
+            <h1 style="font-size: 28px; margin-bottom: 20px;">🔗 Connect WhatsApp</h1>
+        
+        <div id="status" class="status loading">
+            Checking connection status...
+        </div>
+
+        <div id="qr-section" style="display: none;">
+            <div class="instructions">
+                <h3>How to Connect:</h3>
+                <ol>
+                    <li>Open WhatsApp on your phone</li>
+                    <li>Tap <strong>Menu</strong> or <strong>Settings</strong></li>
+                    <li>Select <strong>Linked Devices</strong></li>
+                    <li>Tap <strong>Link a Device</strong></li>
+                    <li>Point your phone to this screen to scan the QR code</li>
+                </ol>
+            </div>
+
+            <div class="qr-container">
+                <div id="loading-spinner" class="spinner"></div>
+                <img id="qr-image" src="" alt="QR Code" style="display: none;">
+            </div>
+
+            <p><small>QR code is valid for 2 minutes and will refresh automatically</small></p>
+        </div>
+
+        <div id="connected-section" style="display: none;">
+            <h2 style="font-size: 24px; color: #155724;">✅ WhatsApp Connected!</h2>
+            <p>Your WhatsApp instance is now connected and ready to use.</p>
+        </div>
+        </div>
+    </div>
+
+    <script>
+        let qrRefreshInterval;
+        let statusCheckInterval;
+        let isShowingQR = false;
+        let isConnected = false;
+
+        // Check connection status
+        async function checkStatus() {
+            try {
+                const response = await fetch('{{ route("whatsapp.status") }}');
+                const data = await response.json();
+                
+                console.log('Status:', data);
+
+                // Check the actual API response structure
+                const accountStatus = data?.status?.accountStatus?.status;
+                
+                if (accountStatus === 'authenticated') {
+                    if (!isConnected) {
+                        showConnected();
+                    }
+                } else {
+                    if (!isShowingQR) {
+                        showQRSection();
+                    }
+                }
+            } catch (error) {
+                console.error('Status check error:', error);
+                document.getElementById('status').textContent = 'Error checking status';
+            }
+        }
+
+        // Load QR code
+        async function loadQRCode() {
+            try {
+                document.getElementById('loading-spinner').style.display = 'block';
+                document.getElementById('qr-image').style.display = 'none';
+
+                const response = await fetch('{{ route("whatsapp.qr") }}');
+                const data = await response.json();
+                
+                console.log('QR Response:', data);
+
+                // Handle different possible response formats from UltraMsg API
+                if (data.already_connected) {
+                    // Instance is already connected
+                    showConnected();
+                } else if (data.qrCode) {
+                    // If qrCode field exists
+                    document.getElementById('qr-image').src = data.qrCode;
+                    document.getElementById('qr-image').style.display = 'block';
+                    document.getElementById('loading-spinner').style.display = 'none';
+                } else if (data.qr) {
+                    // Alternative field name
+                    document.getElementById('qr-image').src = data.qr;
+                    document.getElementById('qr-image').style.display = 'block';
+                    document.getElementById('loading-spinner').style.display = 'none';
+                } else if (data.base64) {
+                    // If it's base64 encoded
+                    document.getElementById('qr-image').src = 'data:image/png;base64,' + data.base64;
+                    document.getElementById('qr-image').style.display = 'block';
+                    document.getElementById('loading-spinner').style.display = 'none';
+                } else if (data.message && !data.error) {
+                    // Success message
+                    showConnected();
+                } else if (data.error) {
+                    document.getElementById('status').className = 'status disconnected';
+                    document.getElementById('status').textContent = 'Error: ' + data.error;
+                    document.getElementById('loading-spinner').style.display = 'none';
+                } else {
+                    // Show raw response for debugging
+                    document.getElementById('status').className = 'status disconnected';
+                    document.getElementById('status').textContent = 'Unexpected response format. Check console for details.';
+                    document.getElementById('loading-spinner').style.display = 'none';
+                    console.error('Unexpected response:', data);
+                }
+            } catch (error) {
+                console.error('QR load error:', error);
+                document.getElementById('status').className = 'status disconnected';
+                document.getElementById('status').textContent = 'Error loading QR code: ' + error.message;
+                document.getElementById('loading-spinner').style.display = 'none';
+            }
+        }
+
+        function showQRSection() {
+            isShowingQR = true;
+            isConnected = false;
+            
+            document.getElementById('status').className = 'status disconnected';
+            document.getElementById('status').textContent = '❌ Not Connected - Scan QR Code';
+            document.getElementById('qr-section').style.display = 'block';
+            document.getElementById('connected-section').style.display = 'none';
+
+            // Load QR code immediately only once
+            loadQRCode();
+
+            // Refresh QR code every 110 seconds (valid for 2 minutes)
+            if (qrRefreshInterval) clearInterval(qrRefreshInterval);
+            qrRefreshInterval = setInterval(loadQRCode, 110000);
+        }
+
+        function showConnected() {
+            isShowingQR = false;
+            isConnected = true;
+            
+            document.getElementById('status').className = 'status connected';
+            document.getElementById('status').textContent = '✅ Connected';
+            document.getElementById('qr-section').style.display = 'none';
+            document.getElementById('connected-section').style.display = 'block';
+
+            // Stop QR refresh
+            if (qrRefreshInterval) clearInterval(qrRefreshInterval);
+        }
+
+        // Initial check
+        checkStatus();
+
+        // Check status every 5 seconds
+        statusCheckInterval = setInterval(checkStatus, 5000);
+
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+            if (qrRefreshInterval) clearInterval(qrRefreshInterval);
+            if (statusCheckInterval) clearInterval(statusCheckInterval);
+        });
+    </script>
+</x-app-layout>

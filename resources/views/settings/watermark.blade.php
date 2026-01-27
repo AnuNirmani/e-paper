@@ -62,7 +62,7 @@
                     Rotation (degrees)
                 </label>
                 <div class="flex items-center space-x-4">
-                    <input type="range" id="rotation" name="rotation" min="0" max="360" value="{{ $settings['rotation'] }}" class="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" disabled>
+                    <input type="range" id="rotation" name="rotation" min="0" max="360" value="{{ $settings['rotation'] }}" class="slider-input flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" disabled>
                     <span class="text-lg font-semibold text-gray-900 w-16 text-right" id="rotation-value">{{ $settings['rotation'] }}°</span>
                 </div>
             </div>
@@ -73,7 +73,7 @@
                     Transparency (0-100)
                 </label>
                 <div class="flex items-center space-x-4">
-                    <input type="range" id="transparency" name="transparency" min="0" max="100" value="{{ $settings['transparency'] }}" class="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" disabled>
+                    <input type="range" id="transparency" name="transparency" min="0" max="100" value="{{ $settings['transparency'] }}" class="slider-input flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" disabled>
                     <span class="text-lg font-semibold text-gray-900 w-16 text-right" id="transparency-value">{{ $settings['transparency'] }}%</span>
                 </div>
             </div>
@@ -98,7 +98,7 @@
                     Font Size (points)
                 </label>
                 <div class="flex items-center space-x-4">
-                    <input type="range" id="font_size" name="font_size" min="8" max="72" value="{{ $settings['font_size'] }}" class="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" disabled>
+                    <input type="range" id="font_size" name="font_size" min="8" max="72" value="{{ $settings['font_size'] }}" class="slider-input flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" disabled>
                     <span class="text-lg font-semibold text-gray-900 w-16 text-right" id="font_size-value">{{ $settings['font_size'] }}</span>
                 </div>
             </div>
@@ -140,6 +140,47 @@
         </form>
     </div>
 </div>
+
+<style>
+    /* Default slider thumb styling */
+    .slider-input::-webkit-slider-thumb {
+        appearance: none;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #9CA3AF;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .slider-input::-moz-range-thumb {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #9CA3AF;
+        cursor: pointer;
+        border: none;
+        transition: background-color 0.3s;
+    }
+
+    /* Blue slider thumb when enabled (edit mode) */
+    .slider-input:not([disabled])::-webkit-slider-thumb {
+        background: #2563EB;
+    }
+
+    .slider-input:not([disabled])::-moz-range-thumb {
+        background: #2563EB;
+    }
+
+    /* Hover effect for enabled sliders */
+    .slider-input:not([disabled]):hover::-webkit-slider-thumb {
+        background: #1D4ED8;
+    }
+
+    .slider-input:not([disabled]):hover::-moz-range-thumb {
+        background: #1D4ED8;
+    }
+</style>
 
 <script>
     // Edit mode functionality

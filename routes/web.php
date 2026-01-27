@@ -6,6 +6,7 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\PublicationController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\WhatsAppController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -68,6 +69,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/settings/watermark', [SettingsController::class, 'watermark'])->name('settings.watermark');
         Route::put('/settings/watermark', [SettingsController::class, 'updateWatermark'])->name('settings.watermark.update');
     });
+
+    // WhatsApp routes
+    Route::get('/whatsapp/connect', [WhatsAppController::class, 'showQRPage'])->name('whatsapp.connect');
+    Route::get('/whatsapp/qr', [WhatsAppController::class, 'getQRCode'])->name('whatsapp.qr');
+    Route::get('/whatsapp/status', [WhatsAppController::class, 'checkStatus'])->name('whatsapp.status');
 });
 
 
