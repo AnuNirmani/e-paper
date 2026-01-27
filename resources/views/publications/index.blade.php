@@ -9,11 +9,11 @@
 
         <!-- Statistics Cards -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg p-6 text-white">
+            <a href="{{ route('publications.index') }}" class="block bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg p-6 text-white hover:scale-[1.01] transition-transform">
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-blue-100 text-sm font-medium mb-1">Total Publications</p>
-                        <p class="text-3xl font-bold">{{ $publications->count() }}</p>
+                        <p class="text-3xl font-bold">{{ $totalPublications }}</p>
                     </div>
                     <div class="bg-white bg-opacity-20 rounded-full p-3">
                         <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -21,13 +21,13 @@
                         </svg>
                     </div>
                 </div>
-            </div>
+            </a>
 
-            <div class="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-200 p-6 border border-gray-100">
+            <a href="{{ route('publications.index', ['status' => 'active']) }}" class="block bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-200 p-6 border border-gray-100">
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-gray-600 text-sm font-medium mb-1">Active Publications</p>
-                        <p class="text-2xl font-bold text-green-600">{{ $publications->where('status', 1)->count() }}</p>
+                        <p class="text-2xl font-bold text-green-600">{{ $activePublications }}</p>
                     </div>
                     <div class="bg-green-50 rounded-full p-3">
                         <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -35,13 +35,13 @@
                         </svg>
                     </div>
                 </div>
-            </div>
+            </a>
 
-            <div class="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-200 p-6 border border-gray-100">
+            <a href="{{ route('publications.index', ['status' => 'inactive']) }}" class="block bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-200 p-6 border border-gray-100">
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-gray-600 text-sm font-medium mb-1">Inactive Publications</p>
-                        <p class="text-2xl font-bold text-gray-600">{{ $publications->where('status', 0)->count() }}</p>
+                        <p class="text-2xl font-bold text-gray-600">{{ $inactivePublications }}</p>
                     </div>
                     <div class="bg-gray-50 rounded-full p-3">
                         <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -49,7 +49,7 @@
                         </svg>
                     </div>
                 </div>
-            </div>
+            </a>
         </div>
 
         <!-- Add Publication Card -->
@@ -109,12 +109,33 @@
         <!-- Publications Table -->
         <div class="bg-white rounded-xl shadow-lg overflow-hidden">
             <div class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100">
-                <h3 class="text-lg font-semibold text-gray-900 flex items-center">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-lg font-semibold text-gray-900 flex items-center">
                     <svg class="w-5 h-5 mr-2 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                     </svg>
-                    All Publications
-                </h3>
+                        All Publications
+                        @if(request('status'))
+                            <span class="ml-2 inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
+                                @if(request('status') === 'active')
+                                    bg-green-100 text-green-800
+                                @elseif(request('status') === 'inactive')
+                                    bg-gray-100 text-gray-800
+                                @endif
+                            ">
+                                {{ ucfirst(request('status')) }} Only
+                            </span>
+                        @endif
+                    </h3>
+                    @if(request('status'))
+                        <a href="{{ route('publications.index') }}" class="text-sm text-blue-600 hover:text-blue-800 font-medium flex items-center">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                            Clear Filter
+                        </a>
+                    @endif
+                </div>
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full">

@@ -9,10 +9,30 @@ class PublicationController extends Controller
 {
     public function index()
     {
-        $publications = Publication::where('status', '!=', -1)
+        $status = request('status');
+
+        $totalPublications    = Publication::where('status', '!=', -1)->count();
+        $activePublications   = Publication::where('status', 1)->count();
+        $inactivePublications = Publication::where('status', 0)->count();
+
+        $query = Publication::where('status', '!=', -1);
+
+        if ($status === 'active') {
+            $query->where('status', 1);
+        } elseif ($status === 'inactive') {
+            $query->where('status', 0);
+        }
+
+        $publications = $query
             ->orderBy('id', 'desc')
             ->paginate(10);
-        return view('publications.index', compact('publications'));
+
+        return view('publications.index', compact(
+            'publications',
+            'totalPublications',
+            'activePublications',
+            'inactivePublications'
+        ));
     }
 
     public function create()

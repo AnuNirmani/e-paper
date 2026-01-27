@@ -55,7 +55,7 @@
                 <h2 class="text-lg font-semibold text-gray-800 mb-4">Publications Overview</h2>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <!-- Total Publications -->
-                    <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg p-6 text-white transform hover:scale-105 transition-all duration-200">
+                    <a href="{{ route('publications.index') }}" class="block bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg p-6 text-white transform hover:scale-105 transition-all duration-200">
                         <div class="flex items-center justify-between mb-4">
                             <div class="bg-white bg-opacity-20 rounded-full p-3">
                                 <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -64,11 +64,11 @@
                             </div>
                         </div>
                         <h3 class="text-sm font-medium opacity-90 mb-1">Total Publications</h3>
-                        <p class="text-4xl font-bold">{{ \App\Models\Publication::count() }}</p>
-                    </div>
+                        <p class="text-4xl font-bold">{{ \App\Models\Publication::where('status', '!=', -1)->count() }}</p>
+                    </a>
 
                     <!-- Active Publications -->
-                    <div class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-200 border-2 border-green-200">
+                    <a href="{{ route('publications.index', ['status' => 'active']) }}" class="block bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-200 border-2 border-green-200">
                         <div class="flex items-center justify-between mb-4">
                             <h3 class="text-sm font-semibold text-gray-700">Active Publications</h3>
                             <div class="bg-green-100 rounded-full p-2">
@@ -79,10 +79,10 @@
                         </div>
                         <p class="text-4xl font-bold text-green-600 mb-2">{{ \App\Models\Publication::where('status', 1)->count() }}</p>
                         <p class="text-sm text-gray-500">Currently Active</p>
-                    </div>
+                    </a>
 
                     <!-- Inactive Publications -->
-                    <div class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-200 border-2 border-gray-200">
+                    <a href="{{ route('publications.index', ['status' => 'inactive']) }}" class="block bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-200 border-2 border-gray-200">
                         <div class="flex items-center justify-between mb-4">
                             <h3 class="text-sm font-semibold text-gray-700">Inactive Publications</h3>
                             <div class="bg-gray-100 rounded-full p-2">
@@ -93,7 +93,7 @@
                         </div>
                         <p class="text-4xl font-bold text-gray-600 mb-2">{{ \App\Models\Publication::where('status', 0)->count() }}</p>
                         <p class="text-sm text-gray-500">Not Active</p>
-                    </div>
+                    </a>
                 </div>
             </div>
 
