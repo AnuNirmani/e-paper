@@ -67,7 +67,8 @@ class CopyController extends Controller
         $file = $request->file('file');
         $filename = time() . '_' . $file->getClientOriginalName();
 
-        $folder = $request->has('watermark')
+        $useWatermark = $request->boolean('watermark');
+        $folder = $useWatermark
             ? 'uploads/with_watermark'
             : 'uploads/without_watermark';
         
@@ -99,10 +100,10 @@ class CopyController extends Controller
                 $watermarkText = null;
                 $outputDir = null;
 
-                if ($request->has('watermark') && $request->watermark == '1') {
+                 if ($useWatermark) {
                      $watermarkText = $customer->first_name . ' ' . $customer->last_name . " copy ";
                      $outputDir = public_path($folder);
-                }
+                 }
 
                 SendUltraMsgPdfJob::dispatch(
                     $customer->id,
