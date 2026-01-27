@@ -95,10 +95,6 @@ class CopyController extends Controller
             if (!empty($customer->whatsapp_number)) {
                 $caption = $ultraMsgService->getDailyPaperCaption($customer->first_name);
                 
-                // Get copy count, default to 1 if 0 or null
-                $copyCount = $customer->pivot->attachment_count ?? 1;
-                if ($copyCount < 1) $copyCount = 1;
-
                 // Prepare Watermark Args
                 $watermarkText = null;
                 $outputDir = null;
@@ -108,20 +104,18 @@ class CopyController extends Controller
                      $outputDir = public_path($folder);
                 }
 
-                for ($i = 0; $i < $copyCount; $i++) {
-                    SendUltraMsgPdfJob::dispatch(
-                        $customer->id,
-                        $customer->whatsapp_number,
-                        $originalFullPath,
-                        $filename,
-                        $caption,
-                        $request->publication_id,
-                        $watermarkText,
-                        $outputDir
-                    );
-                    
-                    $sentCount++;
-                }
+                SendUltraMsgPdfJob::dispatch(
+                    $customer->id,
+                    $customer->whatsapp_number,
+                    $originalFullPath,
+                    $filename,
+                    $caption,
+                    $request->publication_id,
+                    $watermarkText,
+                    $outputDir
+                );
+                
+                $sentCount++;
 
             } else {
                  \Illuminate\Support\Facades\Log::warning("UploadStore: Customer {$customer->id} has no WhatsApp number.");

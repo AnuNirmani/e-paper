@@ -95,12 +95,12 @@ class CustomerController extends Controller
             'payment_receipt' => 'required|boolean',
         ]);
 
-        // Handle publications and attachment counts
+        // Handle publications selection (single copy per publication)
         $pubData = [];
         if ($request->has('publications')) {
             foreach ($request->input('publications') as $pubId => $pub) {
                 if (isset($pub['selected'])) {
-                    $pubData[$pubId] = ['attachment_count' => $pub['attachment_count'] ?? 1];
+                    $pubData[] = $pubId;
                 }
             }
         }
@@ -129,8 +129,8 @@ class CustomerController extends Controller
     {
         $customer = Customer::findOrFail($id);
         $publications = \App\Models\Publication::where('status', 1)->orderBy('name')->get();
-        // Get attached publications and their attachment counts
-        $customerPublications = $customer->publications()->pluck('attachment_count', 'publication_id')->toArray();
+        // Get attached publications
+        $customerPublications = $customer->publications()->pluck('publication_id')->toArray();
         return view('customers.edit', compact('customer', 'publications', 'customerPublications'));
     }
 
@@ -156,12 +156,12 @@ class CustomerController extends Controller
             'payment_receipt' => 'required|boolean',
         ]);
 
-        // Handle publications and attachment counts
+        // Handle publications selection (single copy per publication)
         $pubData = [];
         if ($request->has('publications')) {
             foreach ($request->input('publications') as $pubId => $pub) {
                 if (isset($pub['selected'])) {
-                    $pubData[$pubId] = ['attachment_count' => $pub['attachment_count'] ?? 1];
+                    $pubData[] = $pubId;
                 }
             }
         }

@@ -25,7 +25,6 @@ class Publication extends Model
     public function customers()
     {
         return $this->belongsToMany(\App\Models\Customer::class, 'customer_publication')
-            ->withPivot('attachment_count')
             ->withTimestamps();
     }
 

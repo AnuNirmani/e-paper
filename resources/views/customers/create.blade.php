@@ -361,14 +361,14 @@
                     </div>
                 </div>
 
-                <!-- Publications & Attachments Section -->
+                <!-- Publications Section -->
                 <div class="bg-white rounded-xl shadow-lg overflow-hidden mb-6">
                     <div class="bg-gradient-to-r from-amber-500 to-amber-600 px-6 py-4">
                         <h2 class="text-lg font-semibold text-white flex items-center">
                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
                             </svg>
-                            Publications & Attachments
+                            Publications
                         </h2>
                     </div>
                     <div class="p-6">
@@ -385,7 +385,6 @@
                                             </div>
                                         </th>
                                         <th class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Publication</th>
-                                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Attachment Count</th>
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-200">
@@ -401,9 +400,6 @@
                                                     </div> -->
                                                     {{ $publication->name }}
                                                 </label>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                <input type="number" name="publications[{{ $publication->id }}][attachment_count]" min="1" value="1" class="border border-gray-300 rounded-lg px-3 py-2 w-32 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" placeholder="Count">
                                             </td>
                                         </tr>
                                     @endforeach

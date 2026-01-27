@@ -225,7 +225,7 @@
                                         </div> -->
                                         <div class="ml-3">
                                             <h3 class="text-sm font-semibold text-gray-900">{{ $publication->name }}</h3>
-                                            <p class="text-xs text-gray-500">{{ $publication->pivot->attachment_count }} {{ $publication->pivot->attachment_count == 1 ? 'copy' : 'copies' }}</p>
+                                            <p class="text-xs text-gray-500">Single copy</p>
                                         </div>
                                     </div>
                                 </div>
