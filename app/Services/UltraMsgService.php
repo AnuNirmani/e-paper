@@ -77,4 +77,47 @@ class UltraMsgService
     {
         return "Hello " . $firstName . ", this is today paper";
     }
+
+    /**
+     * Send a text message via WhatsApp
+     *
+     * @param string $to Recipient WhatsApp number
+     * @param string $message Message text to send
+     * @return array|null Response body or null on failure
+     */
+    public function sendMessage($to, $message)
+    {
+        if (!$this->instanceId || !$this->token) {
+            Log::error('UltraMsg credentials not found in env.');
+            return null;
+        }
+
+        try {
+            $response = Http::withOptions([
+                'verify' => false,
+                'timeout' => 60,
+            ])
+                ->asForm()
+                ->post("https://api.ultramsg.com/{$this->instanceId}/messages/chat", [
+                'token' => $this->token,
+                'to' => $to,
+                'body' => $message
+            ]);
+
+            Log::info("UltraMsg Send Message to {$to}", [
+                'status' => $response->status(),
+                'body_response' => $response->body()
+            ]);
+
+            if ($response->successful()) {
+                return $response->json();
+            } else {
+                Log::error('UltraMsg API Error: ' . $response->body());
+                return $response->json();
+            }
+        } catch (\Exception $e) {
+            Log::error('UltraMsg Exception: ' . $e->getMessage());
+            return null;
+        }
+    }
 }
