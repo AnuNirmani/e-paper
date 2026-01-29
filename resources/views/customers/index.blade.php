@@ -239,7 +239,103 @@
         </div>
     </div>
 
+    <!-- Custom Modal -->
+    <div id="customModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-lg bg-white">
+            <div class="mt-3">
+                <div class="flex items-center justify-center mb-4">
+                    <div id="modalIcon" class="flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full">
+                        <!-- Icon will be inserted here -->
+                    </div>
+                </div>
+                <h3 id="modalTitle" class="text-lg leading-6 font-semibold text-gray-900 text-center mb-2"></h3>
+                <div class="mt-2 px-7 py-3">
+                    <p id="modalMessage" class="text-sm text-gray-600 text-center"></p>
+                </div>
+                <div id="modalButtons" class="flex gap-3 px-4 py-3 justify-center">
+                    <!-- Buttons will be inserted here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
+        // Custom Modal Functions
+        const modal = {
+            show: function(title, message, type = 'info', buttons = null) {
+                const modalEl = document.getElementById('customModal');
+                const modalIcon = document.getElementById('modalIcon');
+                const modalTitle = document.getElementById('modalTitle');
+                const modalMessage = document.getElementById('modalMessage');
+                const modalButtons = document.getElementById('modalButtons');
+
+                modalTitle.textContent = title;
+                modalMessage.textContent = message;
+
+                // Set icon based on type
+                let iconHTML = '';
+                let iconBgClass = '';
+                
+                if (type === 'success') {
+                    iconBgClass = 'bg-green-100';
+                    iconHTML = '<svg class="h-6 w-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
+                } else if (type === 'error') {
+                    iconBgClass = 'bg-red-100';
+                    iconHTML = '<svg class="h-6 w-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>';
+                } else if (type === 'confirm') {
+                    iconBgClass = 'bg-blue-100';
+                    iconHTML = '<svg class="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
+                } else {
+                    iconBgClass = 'bg-blue-100';
+                    iconHTML = '<svg class="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
+                }
+
+                modalIcon.className = `flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full ${iconBgClass}`;
+                modalIcon.innerHTML = iconHTML;
+
+                // Set buttons
+                if (buttons) {
+                    modalButtons.innerHTML = buttons;
+                } else {
+                    modalButtons.innerHTML = '<button onclick="modal.hide()" class="px-6 py-2 bg-blue-600 text-white text-base font-medium rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">OK</button>';
+                }
+
+                modalEl.classList.remove('hidden');
+            },
+
+            hide: function() {
+                document.getElementById('customModal').classList.add('hidden');
+            },
+
+            confirm: function(title, message, onConfirm, onCancel = null) {
+                const buttons = `
+                    <button onclick="modal.handleConfirm(true)" class="px-6 py-2 bg-blue-600 text-white text-base font-medium rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">OK</button>
+                    <button onclick="modal.handleConfirm(false)" class="px-6 py-2 bg-gray-200 text-gray-700 text-base font-medium rounded-lg shadow-sm hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400">Cancel</button>
+                `;
+                
+                this.confirmCallback = onConfirm;
+                this.cancelCallback = onCancel;
+                this.show(title, message, 'confirm', buttons);
+            },
+
+            handleConfirm: function(confirmed) {
+                this.hide();
+                if (confirmed && this.confirmCallback) {
+                    this.confirmCallback();
+                } else if (!confirmed && this.cancelCallback) {
+                    this.cancelCallback();
+                }
+            },
+
+            success: function(message) {
+                this.show('Success', message, 'success');
+            },
+
+            error: function(message) {
+                this.show('Error', message, 'error');
+            }
+        };
+
         function toggleCustomerStatus(customerId) {
             fetch(`/customers/${customerId}/toggle-status`, {
                 method: 'PATCH',
@@ -256,21 +352,21 @@
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('Failed to update status');
+                modal.error('Failed to update status');
             });
         }
 
         function sendSubscriptionNotification(customerId, customerName) {
-            if (!confirm(`Send subscription ending notification to ${customerName} via WhatsApp?`)) {
-                return;
-            }
+            modal.confirm(
+                'Send Notification',
+                `Send subscription ending notification to ${customerName} via WhatsApp?`,
+                function() {
+                    sendNotificationRequest(customerId, customerName);
+                }
+            );
+        }
 
-            // Show loading state
-            const button = event.target.closest('button');
-            const originalHTML = button.innerHTML;
-            button.disabled = true;
-            button.innerHTML = '<svg class="animate-spin h-4 w-4 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Sending...';
-
+        function sendNotificationRequest(customerId, customerName) {
             fetch(`/whatsapp/send-subscription-notification/${customerId}`, {
                 method: 'POST',
                 headers: {
@@ -280,20 +376,15 @@
             })
             .then(response => response.json())
             .then(data => {
-                button.disabled = false;
-                button.innerHTML = originalHTML;
-                
                 if (data.success) {
-                    alert('✅ ' + data.message);
+                    modal.success(data.message);
                 } else {
-                    alert('❌ ' + (data.message || 'Failed to send notification'));
+                    modal.error(data.message || 'Failed to send notification');
                 }
             })
             .catch(error => {
-                button.disabled = false;
-                button.innerHTML = originalHTML;
                 console.error('Error:', error);
-                alert('❌ Failed to send notification. Please try again.');
+                modal.error('Failed to send notification. Please try again.');
             });
         }
     </script>
