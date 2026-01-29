@@ -42,6 +42,19 @@ class SendUltraMsgPdfJob implements ShouldQueue
 
     public function handle(UltraMsgService $ultraMsgService, WatermarkService $watermarkService)
     {
+        // Verify customer's subscription is still active before sending
+        $customer = \App\Models\Customer::find($this->customerId);
+        
+        if (!$customer) {
+            Log::error("SendUltraMsgPdfJob: Customer {$this->customerId} not found");
+            return;
+        }
+
+        if (!$customer->isSubscriptionActive()) {
+            Log::warning("SendUltraMsgPdfJob: Customer {$this->customerId} subscription has expired on {$customer->ending_date}. Skipping send.");
+            return;
+        }
+
         $documentBodyToSend = null;
 
         Log::info("SendUltraMsgPdfJob: Starting job for customer {$this->customerId}", [

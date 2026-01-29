@@ -84,16 +84,16 @@ class Customer extends Model
         return self::orderBy('id', 'desc')->get();
     }
 
-    // Get only active customers
+    // Get only active customers with valid subscriptions
     public static function getActiveCustomers()
     {
         return self::where('status', 1)
             ->whereNull('deleted_at')
+            ->where(function($query) {
+                $query->whereNull('ending_date')
+                      ->orWhere('ending_date', '>=', Carbon::now()->startOfDay());
+            })
             ->get();
-        return DB::table('customers')
-        ->where('status', 1)
-        ->select('id', 'first_name')
-        ->get();
     }
 
     // Get single customer by ID
@@ -208,6 +208,19 @@ class Customer extends Model
 
         $text = implode(', ', $segments);
         return $parts['future'] ? ($text.' remaining') : ('Expired '.$text.' ago');
+    }
+
+    /**
+     * Check if the customer's subscription is still active
+     * Returns true if ending_date is null or in the future
+     */
+    public function isSubscriptionActive(): bool
+    {
+        if (!$this->ending_date) {
+            return true; // No end date means subscription is active
+        }
+
+        return $this->ending_date->isFuture() || $this->ending_date->isToday();
     }
 
 }
