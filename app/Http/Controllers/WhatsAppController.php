@@ -69,6 +69,15 @@ class WhatsAppController extends Controller
                     ], 200);
                 }
                 
+                // Check if the error is about non-payment/stopped instance
+                if (strpos($json['error'], 'Stopped') !== false || 
+                    strpos($json['error'], 'non-payment') !== false) {
+                    return response()->json([
+                        'error' => 'Your instance has been Stopped due to non-payment. you can activate this instance by extending your subscription.' . "\n" . 
+                                   'Or go to "https://user.ultramsg.com/app/instances/instances.php" and extend the trial'
+                    ], 400);
+                }
+                
                 return response()->json($json, 400);
             }
             

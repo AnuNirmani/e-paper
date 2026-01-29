@@ -39,6 +39,29 @@
             background: #f8d7da;
             color: #721c24;
         }
+        .error-box {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #dc3545;
+            margin: 20px 0;
+            text-align: left;
+            line-height: 1.6;
+        }
+        .error-box p {
+            margin: 10px 0;
+        }
+        .error-box a {
+            color: #0066cc;
+            text-decoration: none;
+            word-break: break-all;
+            font-weight: 500;
+        }
+        .error-box a:hover {
+            text-decoration: underline;
+            color: #004499;
+        }
         .status.loading {
             background: #fff3cd;
             color: #856404;
@@ -170,9 +193,29 @@
                     // Success message
                     showConnected();
                 } else if (data.error) {
-                    document.getElementById('status').className = 'status disconnected';
-                    document.getElementById('status').textContent = 'Error: ' + data.error;
+                    // Parse error message and make URLs clickable
+                    let errorHtml = data.error;
+                    
+                    // Check if it contains the specific UltraMsg URL pattern
+                    const urlRegex = /(https?:\/\/[^\s"]+)/g;
+                    errorHtml = errorHtml.replace(urlRegex, '<a href="$1" target="_blank">$1</a>');
+                    
+                    // Split by newline and format
+                    const lines = errorHtml.split('\n');
+                    let formattedError = '<div class="error-box">';
+                    lines.forEach(line => {
+                        if (line.trim()) {
+                            formattedError += '<p>' + line.trim() + '</p>';
+                        }
+                    });
+                    formattedError += '</div>';
+                    
+                    document.getElementById('status').className = '';
+                    document.getElementById('status').innerHTML = formattedError;
                     document.getElementById('loading-spinner').style.display = 'none';
+                    
+                    // Hide the QR section and instructions when error occurs
+                    document.getElementById('qr-section').style.display = 'none';
                 } else {
                     // Show raw response for debugging
                     document.getElementById('status').className = 'status disconnected';
