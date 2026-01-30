@@ -90,6 +90,24 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        .btn-logout {
+            margin-top: 20px;
+            padding: 12px 24px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+        .btn-logout:hover {
+            background: #c82333;
+        }
+        .btn-logout:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
     </style>
 
     <div class="whatsapp-container">
@@ -123,6 +141,13 @@
         <div id="connected-section" style="display: none;">
             <h2 style="font-size: 24px; color: #155724;">✅ WhatsApp Connected!</h2>
             <p>Your WhatsApp instance is now connected and ready to use.</p>
+            
+            <button id="logout-btn" class="btn-logout" onclick="logoutWhatsApp()">
+                🔓 Logout WhatsApp
+            </button>
+            <p style="margin-top: 10px; font-size: 12px; color: #666;">
+                Logging out will disconnect this WhatsApp instance
+            </p>
         </div>
         </div>
     </div>
@@ -259,6 +284,45 @@
 
             // Stop QR refresh
             if (qrRefreshInterval) clearInterval(qrRefreshInterval);
+        }
+
+        // Logout WhatsApp
+        async function logoutWhatsApp() {
+            if (!confirm('Are you sure you want to logout from WhatsApp? You will need to scan the QR code again to reconnect.')) {
+                return;
+            }
+
+            const logoutBtn = document.getElementById('logout-btn');
+            logoutBtn.disabled = true;
+            logoutBtn.textContent = 'Logging out...';
+
+            try {
+                const response = await fetch('{{ route("whatsapp.logout") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert('Successfully logged out from WhatsApp');
+                    isShowingQR = false;
+                    isConnected = false;
+                    checkStatus(); // Refresh status
+                } else {
+                    alert(data.message || 'Failed to logout');
+                    logoutBtn.disabled = false;
+                    logoutBtn.textContent = '🔓 Logout WhatsApp';
+                }
+            } catch (error) {
+                console.error('Logout error:', error);
+                alert('Error logging out. Please try again.');
+                logoutBtn.disabled = false;
+                logoutBtn.textContent = '🔓 Logout WhatsApp';
+            }
         }
 
         // Initial check

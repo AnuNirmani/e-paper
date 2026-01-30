@@ -74,6 +74,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/whatsapp/connect', [WhatsAppController::class, 'showQRPage'])->name('whatsapp.connect');
     Route::get('/whatsapp/qr', [WhatsAppController::class, 'getQRCode'])->name('whatsapp.qr');
     Route::get('/whatsapp/status', [WhatsAppController::class, 'checkStatus'])->name('whatsapp.status');
+    Route::post('/whatsapp/logout', [WhatsAppController::class, 'logout'])->name('whatsapp.logout');
     Route::post('/whatsapp/send-subscription-notification/{customer}', [WhatsAppController::class, 'sendSubscriptionEndingNotification'])->name('whatsapp.sendSubscriptionNotification');
 });
 
