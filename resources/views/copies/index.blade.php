@@ -7,7 +7,7 @@
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
                 <div>
                     <h1 class="text-3xl font-bold text-gray-900">Copies Management</h1>
-                    <p class="text-gray-600 mt-1">Publication copies sent to customers</p>
+                    <p class="text-gray-600 mt-1">E-papers sent to customers</p>
                 </div>
                 <!-- <a href="{{ route('copies.create') }}" class="w-full sm:w-auto bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 inline-flex items-center justify-center">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">

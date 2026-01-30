@@ -196,6 +196,14 @@
                                         </svg>
                                         Edit
                                     </a>
+                                    <button onclick="sendSubscriptionNotification({{ $customer->id }}, '{{ $customer->first_name }} {{ $customer->last_name }}')" 
+                                            class="inline-flex items-center px-3 py-1.5 bg-green-50 text-green-700 hover:bg-green-100 rounded-lg transition-colors duration-150"
+                                            title="Send subscription ending notification via WhatsApp">
+                                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+                                        </svg>
+                                        Notify
+                                    </button>
                                     <form action="{{ route('customers.destroy',$customer) }}" method="POST" class="inline">
                                         @csrf
                                         @method('DELETE')
@@ -231,7 +239,103 @@
         </div>
     </div>
 
+    <!-- Custom Modal -->
+    <div id="customModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-lg bg-white">
+            <div class="mt-3">
+                <div class="flex items-center justify-center mb-4">
+                    <div id="modalIcon" class="flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full">
+                        <!-- Icon will be inserted here -->
+                    </div>
+                </div>
+                <h3 id="modalTitle" class="text-lg leading-6 font-semibold text-gray-900 text-center mb-2"></h3>
+                <div class="mt-2 px-7 py-3">
+                    <p id="modalMessage" class="text-sm text-gray-600 text-center"></p>
+                </div>
+                <div id="modalButtons" class="flex gap-3 px-4 py-3 justify-center">
+                    <!-- Buttons will be inserted here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
+        // Custom Modal Functions
+        const modal = {
+            show: function(title, message, type = 'info', buttons = null) {
+                const modalEl = document.getElementById('customModal');
+                const modalIcon = document.getElementById('modalIcon');
+                const modalTitle = document.getElementById('modalTitle');
+                const modalMessage = document.getElementById('modalMessage');
+                const modalButtons = document.getElementById('modalButtons');
+
+                modalTitle.textContent = title;
+                modalMessage.textContent = message;
+
+                // Set icon based on type
+                let iconHTML = '';
+                let iconBgClass = '';
+                
+                if (type === 'success') {
+                    iconBgClass = 'bg-green-100';
+                    iconHTML = '<svg class="h-6 w-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
+                } else if (type === 'error') {
+                    iconBgClass = 'bg-red-100';
+                    iconHTML = '<svg class="h-6 w-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>';
+                } else if (type === 'confirm') {
+                    iconBgClass = 'bg-blue-100';
+                    iconHTML = '<svg class="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
+                } else {
+                    iconBgClass = 'bg-blue-100';
+                    iconHTML = '<svg class="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
+                }
+
+                modalIcon.className = `flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full ${iconBgClass}`;
+                modalIcon.innerHTML = iconHTML;
+
+                // Set buttons
+                if (buttons) {
+                    modalButtons.innerHTML = buttons;
+                } else {
+                    modalButtons.innerHTML = '<button onclick="modal.hide()" class="px-6 py-2 bg-blue-600 text-white text-base font-medium rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">OK</button>';
+                }
+
+                modalEl.classList.remove('hidden');
+            },
+
+            hide: function() {
+                document.getElementById('customModal').classList.add('hidden');
+            },
+
+            confirm: function(title, message, onConfirm, onCancel = null) {
+                const buttons = `
+                    <button onclick="modal.handleConfirm(true)" class="px-6 py-2 bg-blue-600 text-white text-base font-medium rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">OK</button>
+                    <button onclick="modal.handleConfirm(false)" class="px-6 py-2 bg-gray-200 text-gray-700 text-base font-medium rounded-lg shadow-sm hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400">Cancel</button>
+                `;
+                
+                this.confirmCallback = onConfirm;
+                this.cancelCallback = onCancel;
+                this.show(title, message, 'confirm', buttons);
+            },
+
+            handleConfirm: function(confirmed) {
+                this.hide();
+                if (confirmed && this.confirmCallback) {
+                    this.confirmCallback();
+                } else if (!confirmed && this.cancelCallback) {
+                    this.cancelCallback();
+                }
+            },
+
+            success: function(message) {
+                this.show('Success', message, 'success');
+            },
+
+            error: function(message) {
+                this.show('Error', message, 'error');
+            }
+        };
+
         function toggleCustomerStatus(customerId) {
             fetch(`/customers/${customerId}/toggle-status`, {
                 method: 'PATCH',
@@ -248,7 +352,39 @@
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('Failed to update status');
+                modal.error('Failed to update status');
+            });
+        }
+
+        function sendSubscriptionNotification(customerId, customerName) {
+            modal.confirm(
+                'Send Notification',
+                `Send subscription ending notification to ${customerName} via WhatsApp?`,
+                function() {
+                    sendNotificationRequest(customerId, customerName);
+                }
+            );
+        }
+
+        function sendNotificationRequest(customerId, customerName) {
+            fetch(`/whatsapp/send-subscription-notification/${customerId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    modal.success(data.message);
+                } else {
+                    modal.error(data.message || 'Failed to send notification');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                modal.error('Failed to send notification. Please try again.');
             });
         }
     </script>

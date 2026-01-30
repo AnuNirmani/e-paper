@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use App\Models\Customer;
+use App\Services\UltraMsgService;
 
 class WhatsAppController extends Controller
 {
@@ -69,6 +71,15 @@ class WhatsAppController extends Controller
                     ], 200);
                 }
                 
+                // Check if the error is about non-payment/stopped instance
+                if (strpos($json['error'], 'Stopped') !== false || 
+                    strpos($json['error'], 'non-payment') !== false) {
+                    return response()->json([
+                        'error' => 'Your instance has been Stopped due to non-payment. you can activate this instance by extending your subscription.' . "\n" . 
+                                   'Or go to "https://user.ultramsg.com/app/instances/instances.php" and extend the trial'
+                    ], 400);
+                }
+                
                 return response()->json($json, 400);
             }
             
@@ -131,6 +142,82 @@ class WhatsAppController extends Controller
             
             return response()->json([
                 'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Send subscription ending notification to a customer
+     *
+     * @param int $customerId
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function sendSubscriptionEndingNotification($customerId)
+    {
+        try {
+            $customer = Customer::findOrFail($customerId);
+            
+            if (!$customer->whatsapp_number) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Customer does not have a WhatsApp number'
+                ], 400);
+            }
+
+            // Calculate days remaining
+            $daysRemaining = $customer->ending_date ? 
+                now()->diffInDays($customer->ending_date, false) : 0;
+            
+            // Format the message
+            $customerName = trim($customer->first_name . ' ' . $customer->last_name);
+            $endingDate = $customer->ending_date ? 
+                $customer->ending_date->format('d/m/Y') : 'N/A';
+            
+            if ($daysRemaining > 0) {
+                $message = "Hello {$customerName},\n\n";
+                $message .= "This is a friendly reminder that your subscription will be ending soon.\n\n";
+                $message .= "📅 Ending Date: {$endingDate}\n";
+                $message .= "⏰ Days Remaining: {$daysRemaining} " . ($daysRemaining == 1 ? 'day' : 'days') . "\n\n";
+                $message .= "Please renew your subscription to continue enjoying our services.\n\n";
+                $message .= "Thank you for being with us!";
+            } else if ($daysRemaining == 0) {
+                $message = "Hello {$customerName},\n\n";
+                $message .= "Your subscription is ending today ({$endingDate}).\n\n";
+                $message .= "Please renew your subscription to continue enjoying our services.\n\n";
+                $message .= "Thank you for being with us!";
+            } else {
+                $message = "Hello {$customerName},\n\n";
+                $message .= "Your subscription has expired on {$endingDate}.\n\n";
+                $message .= "Please renew your subscription to continue enjoying our services.\n\n";
+                $message .= "Thank you!";
+            }
+
+            // Send via UltraMsg
+            $ultraMsgService = new UltraMsgService();
+            $result = $ultraMsgService->sendMessage($customer->whatsapp_number, $message);
+
+            if ($result) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Subscription ending notification sent successfully to ' . $customerName,
+                    'response' => $result
+                ]);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to send WhatsApp message. Please check logs.'
+                ], 500);
+            }
+
+        } catch (\Exception $e) {
+            \Log::error('Send Subscription Notification Error', [
+                'error' => $e->getMessage(),
+                'customer_id' => $customerId
+            ]);
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Error: ' . $e->getMessage()
             ], 500);
         }
     }

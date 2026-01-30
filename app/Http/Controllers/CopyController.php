@@ -18,7 +18,14 @@ class CopyController extends Controller
 
     public function create()
     {
-        $customers = Customer::where('status', 1)->orderBy('first_name')->get();
+        // Get only active customers with valid subscriptions
+        $customers = Customer::where('status', 1)
+            ->where(function($query) {
+                $query->whereNull('ending_date')
+                      ->orWhere('ending_date', '>=', now()->startOfDay());
+            })
+            ->orderBy('first_name')
+            ->get();
         $publications = Publication::where('status', 1)->orderBy('name')->get();
 
         return view('copies.create', compact('customers', 'publications'));
@@ -43,7 +50,14 @@ class CopyController extends Controller
     =============================== */
     public function upload()
     {
-        $customers = Customer::where('status', 1)->orderBy('first_name')->get();
+        // Get only active customers with valid subscriptions
+        $customers = Customer::where('status', 1)
+            ->where(function($query) {
+                $query->whereNull('ending_date')
+                      ->orWhere('ending_date', '>=', now()->startOfDay());
+            })
+            ->orderBy('first_name')
+            ->get();
         $publications = Publication::getActivePublications();
         return view('copies.upload', compact('customers', 'publications'));
     }
@@ -86,13 +100,27 @@ class CopyController extends Controller
         $originalBase64Data = base64_encode($originalFileData);
         $originalDocumentBody = "data:application/pdf;base64," . $originalBase64Data;
 
-        // Get active customers for this publication
-        $customers = $publication->customers()->where('customers.status', 1)->get();
+        // Get active customers for this publication with valid subscriptions
+        $customers = $publication->customers()
+            ->where('customers.status', 1)
+            ->where(function($query) {
+                $query->whereNull('customers.ending_date')
+                      ->orWhere('customers.ending_date', '>=', now()->startOfDay());
+            })
+            ->get();
 
-        \Illuminate\Support\Facades\Log::info("UploadStore: Found " . $customers->count() . " active customers for publication " . $request->publication_id);
+        \Illuminate\Support\Facades\Log::info("UploadStore: Found " . $customers->count() . " active customers with valid subscriptions for publication " . $request->publication_id);
 
         $sentCount = 0;
+        $skippedExpired = 0;
         foreach ($customers as $customer) {
+            // Double-check subscription is still active
+            if (!$customer->isSubscriptionActive()) {
+                \Illuminate\Support\Facades\Log::warning("UploadStore: Skipping customer {$customer->id} - subscription expired on {$customer->ending_date}");
+                $skippedExpired++;
+                continue;
+            }
+
             if (!empty($customer->whatsapp_number)) {
                 $caption = $ultraMsgService->getDailyPaperCaption($customer->first_name);
                 
@@ -123,8 +151,13 @@ class CopyController extends Controller
             }
         }
 
+        $message = "File uploaded. Sent to $sentCount customers.";
+        if ($skippedExpired > 0) {
+            $message .= " ($skippedExpired skipped - subscription expired)";
+        }
+
         return redirect()->route('copies.index')
-                         ->with('success', "File uploaded. Sent to $sentCount customers.");
+                         ->with('success', $message);
     }
 
     public function destroy($id)

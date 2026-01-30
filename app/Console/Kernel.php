@@ -14,6 +14,16 @@ class Kernel extends ConsoleKernel
     {
         // Delete sent copies older than 7 days daily at 2 AM
         $schedule->command('copies:delete-old')->dailyAt('02:00');
+
+        // Send subscription ending notifications
+        // Notify customers 7 days before subscription ends - runs daily at 9 AM
+        $schedule->command('subscriptions:notify-7days')->dailyAt('09:00');
+        
+        // Notify customers 3 days before subscription ends - runs daily at 9 AM
+        $schedule->command('subscriptions:notify-3days')->dailyAt('09:00');
+        
+        // Notify customers on the day subscription ends - runs daily at 9 AM
+        $schedule->command('subscriptions:notify-today')->dailyAt('09:00');
     }
 
     /**
