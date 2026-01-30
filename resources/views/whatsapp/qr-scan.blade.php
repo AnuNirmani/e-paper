@@ -136,6 +136,9 @@
             </div>
 
             <p><small>QR code is valid for 2 minutes and will refresh automatically</small></p>
+            <!-- <p style="margin-top: 10px; padding: 10px; background: #e7f3ff; border-radius: 5px; font-size: 14px;">
+                📱 <strong>After scanning:</strong> This page will automatically update to show the connected status
+            </p> -->
         </div>
 
         <div id="connected-section" style="display: none;">
@@ -271,6 +274,10 @@
             // Refresh QR code every 110 seconds (valid for 2 minutes)
             if (qrRefreshInterval) clearInterval(qrRefreshInterval);
             qrRefreshInterval = setInterval(loadQRCode, 110000);
+            
+            // Check status more frequently when QR is showing (every 2 seconds)
+            if (statusCheckInterval) clearInterval(statusCheckInterval);
+            statusCheckInterval = setInterval(checkStatus, 2000);
         }
 
         function showConnected() {
@@ -284,6 +291,10 @@
 
             // Stop QR refresh
             if (qrRefreshInterval) clearInterval(qrRefreshInterval);
+            
+            // Slow down status checks when connected (every 5 seconds)
+            if (statusCheckInterval) clearInterval(statusCheckInterval);
+            statusCheckInterval = setInterval(checkStatus, 5000);
         }
 
         // Logout WhatsApp
@@ -328,7 +339,7 @@
         // Initial check
         checkStatus();
 
-        // Check status every 5 seconds
+        // Initial status check interval (5 seconds)
         statusCheckInterval = setInterval(checkStatus, 5000);
 
         // Cleanup on page unload
