@@ -26,25 +26,24 @@ Route::get('/', function () {
 
 Route::get('/dashboard', function () {
     return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+})->middleware(['auth'])->name('dashboard');
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    Route::middleware('can:manage-users')->group(function () {
-        Route::resource('users', UserController::class);
-    });
+    // Users
+    Route::resource('users', UserController::class);
 
-    Route::middleware('can:manage-customers')->group(function () {
+        // Customers
         Route::post('/customers/activate-all', [CustomerController::class, 'activateAll'])->name('customers.activateAll');
         Route::post('/customers/deactivate-all', [CustomerController::class, 'deactivateAll'])->name('customers.deactivateAll');
         Route::patch('/customers/{id}/toggle-status', [CustomerController::class, 'toggleStatus'])->name('customers.toggleStatus');
         Route::resource('customers', CustomerController::class);
-    });
 
-    Route::middleware('can:manage-publications')->group(function () {
+
+        // Publications
         Route::get('/publications', [PublicationController::class, 'index'])->name('publications.index');
         Route::get('/publications/create', [PublicationController::class, 'create'])->name('publications.create');
         Route::post('/publications', [PublicationController::class, 'store'])->name('publications.store');
@@ -53,27 +52,26 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::match(['put', 'patch'], '/publications/{id}', [PublicationController::class, 'update'])->name('publications.update');
         Route::delete('/publications/{id}', [PublicationController::class, 'destroy'])->name('publications.destroy');
         Route::patch('/publications/{id}/toggle-status', [PublicationController::class, 'toggleStatus'])->name('publications.toggleStatus');
-    });
 
-    Route::middleware('can:manage-copies')->group(function () {
+
+    // Copies
         Route::get('/copies', [CopyController::class, 'index'])->name('copies.index');
         Route::get('/copies/create', [CopyController::class, 'create'])->name('copies.create');
         Route::post('/copies', [CopyController::class, 'store'])->name('copies.store');
         Route::get('/copies/upload', [CopyController::class, 'upload'])->name('copies.upload');
         Route::post('/copies/upload', [CopyController::class, 'uploadStore'])->name('copies.upload.store');
         Route::delete('/copies/{id}', [CopyController::class, 'destroy'])->name('copies.destroy');
-    });
+
 
     // Settings routes
-    Route::middleware('can:manage-settings')->group(function () {
         Route::get('/settings/watermark', [SettingsController::class, 'watermark'])->name('settings.watermark');
         Route::put('/settings/watermark', [SettingsController::class, 'updateWatermark'])->name('settings.watermark.update');
-    });
 
     // WhatsApp routes
     Route::get('/whatsapp/connect', [WhatsAppController::class, 'showQRPage'])->name('whatsapp.connect');
     Route::get('/whatsapp/qr', [WhatsAppController::class, 'getQRCode'])->name('whatsapp.qr');
     Route::get('/whatsapp/status', [WhatsAppController::class, 'checkStatus'])->name('whatsapp.status');
+    Route::post('/whatsapp/logout', [WhatsAppController::class, 'logout'])->name('whatsapp.logout');
     Route::post('/whatsapp/send-subscription-notification/{customer}', [WhatsAppController::class, 'sendSubscriptionEndingNotification'])->name('whatsapp.sendSubscriptionNotification');
 });
 
