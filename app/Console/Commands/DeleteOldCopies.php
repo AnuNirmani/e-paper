@@ -29,7 +29,7 @@ class DeleteOldCopies extends Command
         $days = $this->option('days');
         $date = now()->subDays($days);
 
-        $deleted = Copy::where('sent_at', '<', $date)->delete();
+        $deleted = Copy::where('created_at', '<', $date)->delete();
 
         $this->info("Deleted {$deleted} old copies (older than {$days} days)");
 
