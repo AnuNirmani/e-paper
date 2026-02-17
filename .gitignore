@@ -18,6 +18,5 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
-/.2026_01_09_103516_create_jobs_table
 /migrations
 /seeders
