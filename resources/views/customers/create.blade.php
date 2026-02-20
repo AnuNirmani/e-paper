@@ -431,3 +431,53 @@
         </div>
     </div>
 </x-app-layout>
+
+
+<!-- selecting Duration auto-fills Starting Date and Ending Date. -->
+<script>
+
+    (() => {
+        const durationEl = document.querySelector('select[name="duration"]');
+        const startEl = document.querySelector('input[name="starting_date"]');
+        const endEl = document.querySelector('input[name="ending_date"]');
+
+        if (!durationEl || !startEl || !endEl) return;
+
+        const toYmd = (date) => {
+            const y = date.getFullYear();
+            const m = String(date.getMonth() + 1).padStart(2, '0');
+            const d = String(date.getDate()).padStart(2, '0');
+            return `${y}-${m}-${d}`;
+        };
+
+        const calculateEndDate = (startDate, monthsToAdd) => {
+            const end = new Date(startDate);
+            const originalDay = end.getDate();
+
+            end.setMonth(end.getMonth() + monthsToAdd);
+
+            // Handle month-end overflow (e.g., Jan 31 + 1 month)
+            if (end.getDate() !== originalDay) {
+                end.setDate(0);
+            }
+
+            return end;
+        };
+
+        const syncEndingDate = () => {
+            const months = parseInt(durationEl.value, 10);
+            if (!startEl.value || Number.isNaN(months)) return;
+
+            const startDate = new Date(`${startEl.value}T00:00:00`);
+            endEl.value = toYmd(calculateEndDate(startDate, months));
+        };
+
+        durationEl.addEventListener('change', () => {
+            if (!durationEl.value) return;
+            startEl.value = toYmd(new Date()); // auto-fill starting date to today
+            syncEndingDate();                  // auto-fill ending date from duration
+        });
+
+        startEl.addEventListener('change', syncEndingDate);
+    })();
+</script>

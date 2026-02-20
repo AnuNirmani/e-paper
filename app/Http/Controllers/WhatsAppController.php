@@ -11,12 +11,12 @@ class WhatsAppController extends Controller
 {
     private function getInstanceId()
     {
-        return env('ULTRAMSG_INSTANCE_ID', 'instance157661');
+        return env('ULTRAMSG_INSTANCE_ID', 'instance15092');
     }
 
     private function getToken()
     {
-        return env('ULTRAMSG_TOKEN', '6as99r2fzw1mxtsx');
+        return env('ULTRAMSG_TOKEN', 'erj9te9sg3m8n8lv');
     }
 
     public function showQRPage()

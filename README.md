@@ -111,20 +111,9 @@ A modern admin dashboard for managing digital publications, customers, and subsc
 
 **Purpose**: Security-hardened version with additional protection layers.
 
-## 📅 Scheduled Tasks
-
-The application includes automated tasks that run via Laravel's scheduler:
-
-| Task | Schedule | Command | Purpose |
-|------|----------|---------|---------|
-| Delete Old Copies | Daily at 2:00 AM | `copies:delete-old` | Remove copies older than 7 days |
-| Notify 7 Days Before | Daily at 9:00 AM | `subscriptions:notify-7days` | Send WhatsApp notifications |
-| Notify 3 Days Before | Daily at 9:00 AM | `subscriptions:notify-3days` | Send WhatsApp notifications |
-| Notify Expiry Day | Daily at 9:00 AM | `subscriptions:notify-today` | Send WhatsApp notifications |
-
 ## 🔧 Manual Commands
 
-You can also run these commands manually:
+You can run these commands manually:
 
 ```bash
 # Subscription notifications
