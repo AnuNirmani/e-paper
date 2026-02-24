@@ -1,8 +1,9 @@
-<x-app-layout>
+<!-- <x-app-layout>
     @section('page_title', 'Add New Message')
     <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8">
         <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-            <!-- Header -->
+
+
             <div class="mb-6">
                 <a href="{{ route('messages.index') }}" class="inline-flex items-center text-gray-600 hover:text-gray-900 mb-4 transition-colors">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -107,7 +108,8 @@
                     </div>
                 </div>
 
-                <!-- Action Buttons -->
+
+
                 <div class="flex flex-col sm:flex-row justify-end items-center gap-4">
                     <a href="{{ route('messages.index') }}" class="w-full sm:w-auto inline-flex items-center justify-center bg-white hover:bg-gray-50 text-gray-700 font-semibold px-8 py-3 rounded-lg border-2 border-gray-300 hover:border-gray-400 shadow-sm transition-all duration-200">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -125,4 +127,4 @@
             </form>
         </div>
     </div>
-</x-app-layout>
+</x-app-layout> -->

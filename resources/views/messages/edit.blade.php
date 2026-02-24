@@ -1,34 +1,34 @@
 <x-app-layout>
     @section('page_title', 'Edit Message')
-    <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8">
+    <div class="min-h-screen bg-[#f8fafc] py-12 transition-all duration-300">
         <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- Header -->
             <div class="mb-6">
                 <a href="{{ route('messages.index') }}" class="inline-flex items-center text-gray-600 hover:text-gray-900 mb-4 transition-colors">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-                    </svg>
-                    Back to Messages
-                </a>
+                            </svg>
+                        Back to Messages
+                    </a>
                 <h1 class="text-3xl font-bold text-gray-900 mb-2">Edit Message</h1>
                 <p class="text-gray-600">Modify the message template or automated command.</p>
             </div>
 
-            <form method="POST" action="{{ route('messages.update', $message) }}" novalidate>
+            <form method="POST" action="{{ route('messages.update', $message) }}" class="space-y-8" novalidate>
                 @csrf
                 @method('PUT')
                 
                 @if ($errors->any())
-                    <div class="bg-red-50 border-l-4 border-red-400 p-4 mb-6 rounded-lg">
+                    <div class="bg-rose-50 border-l-4 border-rose-500 p-5 rounded-r-xl shadow-sm animate-in fade-in slide-in-from-top-4 duration-300">
                         <div class="flex">
                             <div class="flex-shrink-0">
-                                <svg class="h-5 w-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                <svg class="h-6 w-6 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
                                 </svg>
                             </div>
-                            <div class="ml-3">
-                                <h3 class="text-sm font-medium text-red-800">There were {{ $errors->count() }} error(s) with your submission</h3>
-                                <div class="mt-2 text-sm text-red-700">
+                            <div class="ml-4">
+                                <h3 class="text-base font-bold text-rose-800">Please correct the following errors:</h3>
+                                <div class="mt-2 text-sm text-rose-700 font-medium">
                                     <ul class="list-disc list-inside space-y-1">
                                         @foreach ($errors->all() as $error)
                                             <li>{{ $error }}</li>
@@ -40,110 +40,162 @@
                     </div>
                 @endif
                 
-                <div class="bg-white rounded-xl shadow-lg overflow-hidden mb-6">
-                    <div class="bg-gradient-to-r from-blue-500 to-blue-600 px-6 py-4">
-                        <h2 class="text-lg font-semibold text-white flex items-center">
-                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
-                            </svg>
-                            Message Configuration
-                        </h2>
-                    </div>
-                    <div class="p-6">
-                        <div class="space-y-6">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">
-                                        Name <span class="text-red-500">*</span>
-                                    </label>
-                                    <input name="name" value="{{ old('name', $message->name) }}" placeholder="e.g., Subscription Ending" class="border border-gray-300 rounded-lg px-4 py-3 w-full focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all @error('name') border-red-500 ring-2 ring-red-200 @enderror">
-                                    @error('name')
-                                        <p class="text-red-500 text-sm mt-1 flex items-center">
-                                            <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
-                                            </svg>
-                                            {{ $message }}
-                                        </p>
-                                    @enderror
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">
-                                        Key <span class="text-red-500">*</span>
-                                    </label>
-                                    <input name="key" value="{{ old('key', $message->key) }}" placeholder="e.g., subscription_ending" class="border border-gray-300 rounded-lg px-4 py-3 w-full focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all @error('key') border-red-500 ring-2 ring-red-200 @enderror">
-                                    <p class="mt-1 text-xs text-gray-500 italic">Unique identifier using letters, numbers, and dashes.</p>
-                                    @error('key')
-                                        <p class="text-red-500 text-sm mt-1 flex items-center">
-                                            <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
-                                            </svg>
-                                            {{ $message }}
-                                        </p>
-                                    @enderror
-                                </div>
+                <div class="bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 overflow-hidden transition-all duration-300 hover:shadow-[0_8px_40px_rgb(0,0,0,0.08)]">
+                    <!-- Elegant Header with Gradient -->
+                    <div class="bg-gradient-to-r from-slate-900 to-indigo-950 px-8 py-5 flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div class="p-2 bg-indigo-500/20 rounded-lg backdrop-blur-sm ring-1 ring-white/10">
+                                <svg class="w-5 h-5 text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                </svg>
                             </div>
+                            <h2 class="text-xl font-bold text-white tracking-wide">Configuration Details</h2>
+                        </div>
+                        <div class="hidden sm:block">
+                            <span class="text-indigo-300 text-xs font-bold uppercase tracking-widest bg-indigo-500/10 px-3 py-1 rounded-full ring-1 ring-white/5">Template Editor</span>
+                        </div>
+                    </div>
 
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">
-                                    Message Body <span class="text-red-500">*</span>
+                    <div class="p-8 space-y-8">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <!-- Name Input -->
+                            <div class="space-y-2">
+                                <label class="text-sm font-bold text-slate-700 tracking-wide uppercase flex items-center">
+                                    Display Name
+                                    <span class="text-rose-500 ml-1">*</span>
                                 </label>
-                                <textarea name="body" rows="6" placeholder="Enter the message content here..." class="border border-gray-300 rounded-lg px-4 py-3 w-full focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all @error('body') border-red-500 ring-2 ring-red-200 @enderror">{{ old('body', $message->body) }}</textarea>
-                                @error('body')
-                                    <p class="text-red-500 text-sm mt-1 flex items-center">
-                                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                <div class="relative group">
+                                    <input name="name" 
+                                           value="{{ old('name', $message->name) }}" 
+                                           placeholder="e.g., Subscription Renewal" 
+                                           class="w-full bg-slate-50 border-slate-200 rounded-xl px-4 py-3.5 text-slate-900 font-medium transition-all duration-200 focus:bg-white focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none hover:border-slate-300 @error('name') border-rose-500 ring-rose-200 @enderror">
+                                </div>
+                                @error('name')
+                                    <p class="text-rose-600 text-xs font-bold mt-1.5 flex items-center">
+                                        <svg class="w-3.5 h-3.5 mr-1" fill="currentColor" viewBox="0 0 20 20">
                                             <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
                                         </svg>
                                         {{ $message }}
                                     </p>
                                 @enderror
+                            </div>
 
-                                <!-- Placeholder Guide -->
-                                @if(in_array($message->key, ['subscription_notify_7days','subscription_notify_3days','subscription_notify_today','subscription_notify_expired']))
-                                <div class="mt-3 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                                    <p class="text-xs font-semibold text-blue-700 mb-2 flex items-center">
-                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                        Available Placeholders
+                            <!-- Key Input -->
+                            <div class="space-y-2">
+                                <label class="text-sm font-bold text-slate-700 tracking-wide uppercase flex items-center">
+                                    Mapping Key
+                                    <span class="text-rose-500 ml-1">*</span>
+                                </label>
+                                <div class="relative group">
+                                    <input name="key" 
+                                           value="{{ old('key', $message->key) }}" 
+                                           placeholder="e.g., renewal_notice" 
+                                           class="w-full bg-slate-50 border-slate-200 rounded-xl px-4 py-3.5 text-indigo-700 font-mono text-sm transition-all duration-200 focus:bg-white focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none hover:border-slate-300 @error('key') border-rose-500 ring-rose-200 @enderror">
+                                </div>
+                                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-1.5 flex items-center">
+                                    <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-width="2"></path></svg>
+                                    Used for system integration. Letters, numbers, and dashes only.
+                                </p>
+                                @error('key')
+                                    <p class="text-rose-600 text-xs font-bold mt-1.5 flex items-center">
+                                        <svg class="w-3.5 h-3.5 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        {{ $message }}
                                     </p>
-                                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                                        <div class="flex items-start gap-2">
-                                            <code class="px-2 py-0.5 bg-white border border-blue-200 rounded text-xs text-blue-800 font-mono shrink-0">{name}</code>
-                                            <span class="text-xs text-blue-600">Customer's full name</span>
-                                        </div>
-                                        <div class="flex items-start gap-2">
-                                            <code class="px-2 py-0.5 bg-white border border-blue-200 rounded text-xs text-blue-800 font-mono shrink-0">{ending_date}</code>
-                                            <span class="text-xs text-blue-600">Subscription end date (d/m/Y)</span>
-                                        </div>
-                                        <div class="flex items-start gap-2">
-                                            <code class="px-2 py-0.5 bg-white border border-blue-200 rounded text-xs text-blue-800 font-mono shrink-0">{days_remaining}</code>
-                                            <span class="text-xs text-blue-600">e.g. "7 days" or "today"</span>
-                                        </div>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <!-- Body Input Section -->
+                        <div class="space-y-3">
+                            <label class="text-sm font-bold text-slate-700 tracking-wide uppercase flex items-center">
+                                Message content
+                                <span class="text-rose-500 ml-1">*</span>
+                            </label>
+                            <div class="relative">
+                                <textarea name="body" 
+                                          rows="8" 
+                                          placeholder="Type your message content here..." 
+                                          class="w-full bg-slate-50 border-slate-200 rounded-2xl px-6 py-5 text-slate-800 font-medium leading-relaxed transition-all duration-200 focus:bg-white focus:ring-8 focus:ring-indigo-500/5 focus:border-indigo-500 outline-none hover:border-slate-300 @error('body') border-rose-500 ring-rose-200 @enderror">{{ old('body', $message->body) }}</textarea>
+                                
+                                <!-- Floating indicator if template has variables -->
+                                <div class="absolute bottom-4 right-4 flex space-x-2">
+                                    <div class="px-3 py-1.5 bg-slate-900/5 text-slate-500 backdrop-blur-md rounded-lg text-[10px] font-bold uppercase tracking-widest ring-1 ring-slate-900/5">
+                                        Rich Template
                                     </div>
                                 </div>
-                                @endif
+                            </div>
+                            @error('body')
+                                <p class="text-rose-600 text-xs font-bold mt-1.5 flex items-center">
+                                    <svg class="w-3.5 h-3.5 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    {{ $message }}
+                                </p>
+                            @enderror
+                        </div>
 
-                            <div>
-                                <label class="flex items-center cursor-pointer">
-                                    <input type="checkbox" name="is_active" value="1" {{ old('is_active', $message->is_active) ? 'checked' : '' }} class="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-2 focus:ring-blue-500 cursor-pointer">
-                                    <span class="ml-2 text-sm font-medium text-gray-700">Is Active</span>
+                        <!-- Enhanced Placeholder Guide -->
+                        @if(in_array($message->key, ['subscription_notify_7days','subscription_notify_3days','subscription_notify_today','subscription_notify_expired']))
+                        <div class="bg-indigo-50/50 border border-indigo-100 rounded-2xl p-6 transition-all hover:bg-indigo-50">
+                            <div class="flex items-center space-x-3 mb-4">
+                                <div class="p-1.5 bg-indigo-500 rounded-lg shadow-sm">
+                                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                </div>
+                                <h3 class="text-indigo-900 font-extrabold text-sm uppercase tracking-wider">Dynamic Placeholders</h3>
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                <div class="group bg-white p-4 rounded-xl border border-indigo-100 shadow-sm transition-all hover:scale-[1.02] hover:shadow-md cursor-default">
+                                    <div class="text-indigo-600 font-mono text-xs font-bold mb-2 group-hover:text-indigo-700">{name}</div>
+                                    <p class="text-[11px] text-indigo-400 font-medium leading-tight">Inserts the customer's full professional name.</p>
+                                </div>
+                                <div class="group bg-white p-4 rounded-xl border border-indigo-100 shadow-sm transition-all hover:scale-[1.02] hover:shadow-md cursor-default">
+                                    <div class="text-indigo-600 font-mono text-xs font-bold mb-2 group-hover:text-indigo-700">{ending_date}</div>
+                                    <p class="text-[11px] text-indigo-400 font-medium leading-tight">The formatted expiry date of the subscription.</p>
+                                </div>
+                                <div class="group bg-white p-4 rounded-xl border border-indigo-100 shadow-sm transition-all hover:scale-[1.02] hover:shadow-md cursor-default">
+                                    <div class="text-indigo-600 font-mono text-xs font-bold mb-2 group-hover:text-indigo-700">{days_remaining}</div>
+                                    <p class="text-[11px] text-indigo-400 font-medium leading-tight">Humanized time until expiry (e.g., "3 days").</p>
+                                </div>
+                            </div>
+                        </div>
+                        @endif
+
+                        <!-- Status Check -->
+                        <div class="pt-4 border-t border-slate-100 flex items-center justify-between">
+                            <div class="flex items-center space-x-4">
+                                <span class="text-sm font-bold text-slate-700 uppercase tracking-wide">Status</span>
+                                <label class="relative inline-flex items-center cursor-pointer group">
+                                    <input type="checkbox" name="is_active" value="1" {{ old('is_active', $message->is_active) ? 'checked' : '' }} class="sr-only peer">
+                                    <div class="w-14 h-7 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-500/20 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[4px] after:start-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600 shadow-inner group-hover:bg-slate-300 transition-all"></div>
+                                    <span class="ms-3 text-sm font-bold text-slate-500 peer-checked:text-indigo-600 transition-colors uppercase tracking-wider">Active</span>
                                 </label>
+                            </div>
+                            <div class="text-[11px] text-slate-400 font-medium italic">
+                                Last updated: {{ $message->updated_at->format('M d, Y H:i') }}
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Action Buttons -->
-                <div class="flex flex-col sm:flex-row justify-end items-center gap-4">
-                    <a href="{{ route('messages.index') }}" class="w-full sm:w-auto inline-flex items-center justify-center bg-white hover:bg-gray-50 text-gray-700 font-semibold px-8 py-3 rounded-lg border-2 border-gray-300 hover:border-gray-400 shadow-sm transition-all duration-200">
+                <!-- Action Buttons with polished styles and animations -->
+                <div class="flex flex-col sm:flex-row justify-end items-center gap-5 pb-12">
+                    <a href="{{ route('messages.index') }}" 
+                       class="w-full sm:w-auto inline-flex items-center justify-center bg-white hover:bg-slate-50 text-slate-600 font-bold px-8 py-4 rounded-xl border-2 border-slate-200 hover:border-slate-300 shadow-sm transition-all duration-200 hover:scale-[0.98] active:scale-95 tracking-wide">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
                         </svg>
-                        Cancel
+                        Cancel Changes
                     </a>
-                    <button type="submit" class="w-full sm:w-auto inline-flex items-center justify-center bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-8 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    <button type="submit" 
+                            class="w-full sm:w-auto inline-flex items-center justify-center bg-slate-900 hover:bg-indigo-700 text-white font-bold px-10 py-4 rounded-xl shadow-[0_10px_20px_rgb(0,0,0,0.1)] hover:shadow-[0_15px_25px_rgb(79,70,229,0.3)] transition-all duration-300 hover:scale-[1.02] active:scale-95 tracking-wide group">
+                        <svg class="w-5 h-5 mr-3 transition-transform group-hover:rotate-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
                         </svg>
-                        Save Changes
+                        Update Template
                     </button>
                 </div>
             </form>
