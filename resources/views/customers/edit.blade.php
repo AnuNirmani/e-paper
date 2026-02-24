@@ -212,6 +212,43 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    Duration (months) <span class="text-red-500">*</span>
+                                </label>
+                                <select name="duration" class="border border-gray-300 rounded-lg px-4 py-3 w-full focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all @error('duration') border-red-500 ring-2 ring-red-200 @enderror">
+                                    <option value="1" {{ old('duration', $customer->duration) == 1 ? 'selected' : '' }}>1 month</option>
+                                    <option value="6" {{ old('duration', $customer->duration) == 6 ? 'selected' : '' }}>6 months</option>
+                                    <option value="12" {{ old('duration', $customer->duration) == 12 ? 'selected' : '' }}>12 months</option>
+                                    <option value="18" {{ old('duration', $customer->duration) == 18 ? 'selected' : '' }}>18 months</option>
+                                    <option value="24" {{ old('duration', $customer->duration) == 24 ? 'selected' : '' }}>24 months</option>
+                                </select>
+                                @error('duration')
+                                    <p class="text-red-500 text-sm mt-1 flex items-center">
+                                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        {{ $message }}
+                                    </p>
+                                @enderror
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    Status <span class="text-red-500">*</span>
+                                </label>
+                                <select name="status" class="border border-gray-300 rounded-lg px-4 py-3 w-full focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all @error('status') border-red-500 ring-2 ring-red-200 @enderror">
+                                    <option value="1" {{ old('status', $customer->status) == 1 ? 'selected' : '' }}>Active</option>
+                                    <option value="0" {{ old('status', $customer->status) == 0 ? 'selected' : '' }}>Inactive</option>
+                                </select>
+                                @error('status')
+                                    <p class="text-red-500 text-sm mt-1 flex items-center">
+                                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        {{ $message }}
+                                    </p>
+                                @enderror
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
                                     Starting Date <span class="text-red-500">*</span>
                                 </label>
                                 <div class="relative">
@@ -251,43 +288,6 @@
                                         </p>
                                     @enderror
                                 </div>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">
-                                    Duration (months) <span class="text-red-500">*</span>
-                                </label>
-                                <select name="duration" class="border border-gray-300 rounded-lg px-4 py-3 w-full focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all @error('duration') border-red-500 ring-2 ring-red-200 @enderror">
-                                    <option value="1" {{ old('duration', $customer->duration) == 1 ? 'selected' : '' }}>1 month</option>
-                                    <option value="6" {{ old('duration', $customer->duration) == 6 ? 'selected' : '' }}>6 months</option>
-                                    <option value="12" {{ old('duration', $customer->duration) == 12 ? 'selected' : '' }}>12 months</option>
-                                    <option value="18" {{ old('duration', $customer->duration) == 18 ? 'selected' : '' }}>18 months</option>
-                                    <option value="24" {{ old('duration', $customer->duration) == 24 ? 'selected' : '' }}>24 months</option>
-                                </select>
-                                @error('duration')
-                                    <p class="text-red-500 text-sm mt-1 flex items-center">
-                                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
-                                        </svg>
-                                        {{ $message }}
-                                    </p>
-                                @enderror
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">
-                                    Status <span class="text-red-500">*</span>
-                                </label>
-                                <select name="status" class="border border-gray-300 rounded-lg px-4 py-3 w-full focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all @error('status') border-red-500 ring-2 ring-red-200 @enderror">
-                                    <option value="1" {{ old('status', $customer->status) == 1 ? 'selected' : '' }}>Active</option>
-                                    <option value="0" {{ old('status', $customer->status) == 0 ? 'selected' : '' }}>Inactive</option>
-                                </select>
-                                @error('status')
-                                    <p class="text-red-500 text-sm mt-1 flex items-center">
-                                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
-                                        </svg>
-                                        {{ $message }}
-                                    </p>
-                                @enderror
                             </div>
                         </div>
                     </div>
@@ -432,3 +432,52 @@
         </div>
     </div>
 </x-app-layout>
+
+<!-- selecting Duration auto-fills Starting Date and Ending Date. -->
+<script>
+
+    (() => {
+        const durationEl = document.querySelector('select[name="duration"]');
+        const startEl = document.querySelector('input[name="starting_date"]');
+        const endEl = document.querySelector('input[name="ending_date"]');
+
+        if (!durationEl || !startEl || !endEl) return;
+
+        const toYmd = (date) => {
+            const y = date.getFullYear();
+            const m = String(date.getMonth() + 1).padStart(2, '0');
+            const d = String(date.getDate()).padStart(2, '0');
+            return `${y}-${m}-${d}`;
+        };
+
+        const calculateEndDate = (startDate, monthsToAdd) => {
+            const end = new Date(startDate);
+            const originalDay = end.getDate();
+
+            end.setMonth(end.getMonth() + monthsToAdd);
+
+            // Handle month-end overflow (e.g., Jan 31 + 1 month)
+            if (end.getDate() !== originalDay) {
+                end.setDate(0);
+            }
+
+            return end;
+        };
+
+        const syncEndingDate = () => {
+            const months = parseInt(durationEl.value, 10);
+            if (!startEl.value || Number.isNaN(months)) return;
+
+            const startDate = new Date(`${startEl.value}T00:00:00`);
+            endEl.value = toYmd(calculateEndDate(startDate, months));
+        };
+
+        durationEl.addEventListener('change', () => {
+            if (!durationEl.value) return;
+            startEl.value = toYmd(new Date()); // auto-fill starting date to today
+            syncEndingDate();                  // auto-fill ending date from duration
+        });
+
+        startEl.addEventListener('change', syncEndingDate);
+    })();
+</script>
