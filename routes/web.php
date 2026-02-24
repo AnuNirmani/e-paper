@@ -8,6 +8,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\WhatsAppController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\MessageController;
 
 /*
 |--------------------------------------------------------------------------
@@ -73,6 +74,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/whatsapp/status', [WhatsAppController::class, 'checkStatus'])->name('whatsapp.status');
     Route::post('/whatsapp/logout', [WhatsAppController::class, 'logout'])->name('whatsapp.logout');
     Route::post('/whatsapp/send-subscription-notification/{customer}', [WhatsAppController::class, 'sendSubscriptionEndingNotification'])->name('whatsapp.sendSubscriptionNotification');
+
+    // Messages routes
+    Route::get('/commands', fn () => redirect()->route('messages.index'))->name('commands.index');
+    Route::resource('messages', MessageController::class)->except(['show']);
+
 });
 
 
