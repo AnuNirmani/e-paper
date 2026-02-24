@@ -234,31 +234,38 @@ class WhatsAppController extends Controller
 
             // Calculate days remaining
             $daysRemaining = $customer->ending_date ? 
-                now()->diffInDays($customer->ending_date, false) : 0;
+                now()->startOfDay()->diffInDays($customer->ending_date->startOfDay(), false) : 0;
             
-            // Format the message
+            // Format the message using Template Service
+            $messageTemplateService = app(\App\Services\MessageTemplateService::class);
             $customerName = trim($customer->first_name . ' ' . $customer->last_name);
-            $endingDate = $customer->ending_date ? 
+            $endingDateStr = $customer->ending_date ? 
                 $customer->ending_date->format('d/m/Y') : 'N/A';
-            
-            if ($daysRemaining > 0) {
-                $message = "Hello {$customerName},\n\n";
-                $message .= "This is a friendly reminder that your subscription will be ending soon.\n\n";
-                $message .= "📅 Ending Date: {$endingDate}\n";
-                $message .= "⏰ Days Remaining: {$daysRemaining} " . ($daysRemaining == 1 ? 'day' : 'days') . "\n\n";
-                $message .= "Please renew your subscription to continue enjoying our services.\n\n";
-                $message .= "Thank you for being with us!";
-            } else if ($daysRemaining == 0) {
-                $message = "Hello {$customerName},\n\n";
-                $message .= "Your subscription is ending today ({$endingDate}).\n\n";
-                $message .= "Please renew your subscription to continue enjoying our services.\n\n";
-                $message .= "Thank you for being with us!";
+
+            // Determine template key based on days remaining
+            if ($daysRemaining > 3) {
+                $key = 'subscription_notify_7days';
+                $daysText = $daysRemaining . ' days';
+            } elseif ($daysRemaining > 0) {
+                $key = 'subscription_notify_3days';
+                $daysText = $daysRemaining . ' days';
+            } elseif ($daysRemaining == 0) {
+                $key = 'subscription_notify_today';
+                $daysText = 'today';
             } else {
-                $message = "Hello {$customerName},\n\n";
-                $message .= "Your subscription has expired on {$endingDate}.\n\n";
-                $message .= "Please renew your subscription to continue enjoying our services.\n\n";
-                $message .= "Thank you!";
+                $key = 'subscription_notify_expired';
+                $daysText = 'expired';
             }
+
+            $message = $messageTemplateService->buildSubscriptionMessage(
+                $key,
+                '', // No hardcoded fallback — edit templates at /messages
+                [
+                    'name' => $customerName,
+                    'ending_date' => $endingDateStr,
+                    'days_remaining' => $daysText,
+                ]
+            );
 
             // Send via UltraMsg
             $ultraMsgService = new UltraMsgService();
