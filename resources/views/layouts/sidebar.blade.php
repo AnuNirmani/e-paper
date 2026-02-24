@@ -45,6 +45,13 @@
             </li>
 
             <li>
+                <a href="{{ Route::has('commands.index') ? route('commands.index') : (Route::has('messages.index') ? route('messages.index') : '#') }}"
+                   class="block px-4 py-2 hover:bg-gray-700 {{ request()->routeIs('commands.*') || request()->routeIs('messages.*') ? 'bg-gray-700 border-l-4 border-blue-500' : '' }}">
+                    Commands
+                </a>
+            </li>
+
+            <li>
                 <a href="{{ route('settings.watermark') }}"
                    class="block px-4 py-2 hover:bg-gray-700 {{ request()->routeIs('settings.*') ? 'bg-gray-700 border-l-4 border-blue-500' : '' }}">
                     Watermark Settings
