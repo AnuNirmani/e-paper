@@ -70,7 +70,8 @@ class CustomerController extends Controller
     public function create()
     {
         $publications = \App\Models\Publication::where('status', 1)->orderBy('name')->get();
-        return view('customers.create', compact('publications'));
+        $dailyPrices = Customer::publicationDailyPrices();
+        return view('customers.create', compact('publications', 'dailyPrices'));
     }
 
     public function store(Request $request)
@@ -95,27 +96,32 @@ class CustomerController extends Controller
             'payment_receipt' => 'required|boolean',
         ]);
 
-        // Handle publications selection (single copy per publication)
-        $pubData = [];
+        // Extract publication IDs
+        $publicationIds = [];
         if ($request->has('publications')) {
             foreach ($request->input('publications') as $pubId => $pub) {
                 if (isset($pub['selected'])) {
-                    $pubData[] = $pubId;
+                    $publicationIds[] = (int)$pubId;
                 }
             }
         }
 
         // Validate at least one publication is selected
-        if (empty($pubData)) {
+        if (empty($publicationIds)) {
             return redirect()->back()
                 ->withErrors(['publications' => 'Please select at least one publication.'])
                 ->withInput();
         }
 
+        // Calculate pricing
+        $pricing = $this->buildPricing($publicationIds, $validated['starting_date'], $validated['ending_date']);
+        $validated['payment_amount'] = $pricing['total'];
+
         $customer = Customer::storeCustomer($validated);
-        $customer->publications()->sync($pubData);
+        $customer->publications()->sync($pricing['pivot']);
+
         return redirect()->route('customers.index')
-            ->with('success', 'Customer added');
+            ->with('success', 'Customer added (Total: Rs ' . number_format($pricing['total'], 2) . ')');
     }
 
 
@@ -131,7 +137,8 @@ class CustomerController extends Controller
         $publications = \App\Models\Publication::where('status', 1)->orderBy('name')->get();
         // Get attached publications
         $customerPublications = $customer->publications()->pluck('publication_id')->toArray();
-        return view('customers.edit', compact('customer', 'publications', 'customerPublications'));
+        $dailyPrices = Customer::publicationDailyPrices();
+        return view('customers.edit', compact('customer', 'publications', 'customerPublications', 'dailyPrices'));
     }
 
     public function update(Request $request, $id)
@@ -156,28 +163,59 @@ class CustomerController extends Controller
             'payment_receipt' => 'required|boolean',
         ]);
 
-        // Handle publications selection (single copy per publication)
-        $pubData = [];
+        // Extract publication IDs
+        $publicationIds = [];
         if ($request->has('publications')) {
             foreach ($request->input('publications') as $pubId => $pub) {
                 if (isset($pub['selected'])) {
-                    $pubData[] = $pubId;
+                    $publicationIds[] = (int)$pubId;
                 }
             }
         }
 
         // Validate at least one publication is selected
-        if (empty($pubData)) {
+        if (empty($publicationIds)) {
             return redirect()->back()
                 ->withErrors(['publications' => 'Please select at least one publication.'])
                 ->withInput();
         }
 
+        // Calculate pricing
+        $pricing = $this->buildPricing($publicationIds, $validated['starting_date'], $validated['ending_date']);
+        $validated['payment_amount'] = $pricing['total'];
+
         Customer::updateCustomer($id, $validated);
         $customer = Customer::find($id);
-        $customer->publications()->sync($pubData);
+        $customer->publications()->sync($pricing['pivot']);
+
         return redirect()->route('customers.index')
-            ->with('success', 'Customer updated');
+            ->with('success', 'Customer updated (Total: Rs ' . number_format($pricing['total'], 2) . ')');
+    }
+
+    /**
+     * Calculate total and per-publication pricing for a date range.
+     */
+    private function buildPricing(array $publicationIds, string $startingDate, string $endingDate): array
+    {
+        $start = Carbon::parse($startingDate)->startOfDay();
+        $end = Carbon::parse($endingDate)->startOfDay();
+        $days = max(1, $start->diffInDays($end) + 1);
+
+        $pivot = [];
+        $total = 0.0;
+        $hardcoded = Customer::publicationDailyPrices();
+
+        $publications = \App\Models\Publication::whereIn('id', $publicationIds)->get(['id', 'name']);
+        foreach ($publications as $publication) {
+            $nameKey = strtolower(trim($publication->name));
+            $daily = (float) ($hardcoded[$nameKey] ?? 0);
+            $lineTotal = round($daily * $days, 2);
+
+            $pivot[$publication->id] = ['price' => $lineTotal];
+            $total += $lineTotal;
+        }
+
+        return ['pivot' => $pivot, 'total' => round($total, 2)];
     }
 
     public function destroy($id)

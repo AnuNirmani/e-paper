@@ -161,6 +161,9 @@
                                                class="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-2 focus:ring-green-500 cursor-pointer">
                                         <span class="ml-2 text-xs font-semibold {{ $customer->status == 1 ? 'text-green-800' : 'text-gray-800' }}">
                                             {{ $customer->status == 1 ? 'Active' : 'Inactive' }}
+                                            @if(!$customer->isSubscriptionActive() && $customer->status == 1)
+                                                <span class="text-red-600 font-bold ml-1 text-[10px] uppercase">(Expired)</span>
+                                            @endif
                                         </span>
                                     </label>
                                 @else
@@ -176,9 +179,14 @@
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-center">
-                                <div class="text-sm text-gray-900 text-center">{{ $customer->ending_date ? $customer->ending_date->format('Y-m-d') : '' }}</div>
+                                @php($isExpired = !$customer->isSubscriptionActive())
+                                <div class="text-sm font-semibold {{ $isExpired ? 'text-red-600' : 'text-gray-900' }} text-center">
+                                    {{ $customer->ending_date ? $customer->ending_date->format('Y-m-d') : '' }}
+                                </div>
                                 @if($customer->ending_date)
-                                    <div class="text-xs text-gray-500 text-center">{{ $customer->remaining_text }}</div>
+                                    <div class="text-xs {{ $isExpired ? 'text-red-500 font-medium' : 'text-gray-500' }} text-center">
+                                        {{ $customer->remaining_text }}
+                                    </div>
                                 @endif
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-center">
