@@ -225,7 +225,7 @@
                                         </div> -->
                                         <div class="ml-3">
                                             <h3 class="text-sm font-semibold text-gray-900">{{ $publication->name }}</h3>
-                                            <p class="text-xs text-gray-500">Single copy</p>
+                                            <p class="text-xs text-gray-500">Period Price: Rs {{ number_format((float)($publication->pivot->price ?? 0), 2) }}</p>
                                         </div>
                                     </div>
                                 </div>

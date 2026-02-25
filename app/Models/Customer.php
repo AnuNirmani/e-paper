@@ -10,6 +10,7 @@ class Customer extends Model
     public function publications()
     {
         return $this->belongsToMany(Publication::class, 'customer_publication')
+            ->withPivot('price')
             ->withTimestamps();
     }
     protected $table = 'customers';
@@ -223,4 +224,19 @@ class Customer extends Model
         return $this->ending_date->isFuture() || $this->ending_date->isToday();
     }
 
+    /**
+     * Get hardcoded daily prices for publications
+     * 
+     * @return array
+     */
+    public static function publicationDailyPrices(): array
+    {
+        return [
+            // key: lowercase publication name
+            'daily mirror'     => 120.00,
+            'lankadeepa'       => 100.00,
+            'the sunday times' => 150.00,
+            'deshaya'          => 110.00,
+        ];
+    }
 }
