@@ -18,5 +18,5 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
-/migrations
-/seeders
+/database/migrations/
+/database/seeders/
