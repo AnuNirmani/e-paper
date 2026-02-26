@@ -70,8 +70,7 @@ class CustomerController extends Controller
     public function create()
     {
         $publications = \App\Models\Publication::where('status', 1)->orderBy('name')->get();
-        $dailyPrices = Customer::publicationDailyPrices();
-        return view('customers.create', compact('publications', 'dailyPrices'));
+        return view('customers.create', compact('publications'));
     }
 
     public function store(Request $request)
@@ -135,10 +134,9 @@ class CustomerController extends Controller
     {
         $customer = Customer::findOrFail($id);
         $publications = \App\Models\Publication::where('status', 1)->orderBy('name')->get();
-        // Get attached publications
         $customerPublications = $customer->publications()->pluck('publication_id')->toArray();
-        $dailyPrices = Customer::publicationDailyPrices();
-        return view('customers.edit', compact('customer', 'publications', 'customerPublications', 'dailyPrices'));
+
+        return view('customers.edit', compact('customer', 'publications', 'customerPublications'));
     }
 
     public function update(Request $request, $id)
@@ -203,12 +201,10 @@ class CustomerController extends Controller
 
         $pivot = [];
         $total = 0.0;
-        $hardcoded = Customer::publicationDailyPrices();
 
-        $publications = \App\Models\Publication::whereIn('id', $publicationIds)->get(['id', 'name']);
+        $publications = \App\Models\Publication::whereIn('id', $publicationIds)->get(['id', 'price']);
         foreach ($publications as $publication) {
-            $nameKey = strtolower(trim($publication->name));
-            $daily = (float) ($hardcoded[$nameKey] ?? 0);
+            $daily = (float) ($publication->price ?? 0);
             $lineTotal = round($daily * $days, 2);
 
             $pivot[$publication->id] = ['price' => $lineTotal];

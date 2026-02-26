@@ -62,11 +62,26 @@
             </h3>
             <form method="POST" action="{{ route('publications.store') }}">
                 @csrf
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <div class="md:col-span-1">
                         <label class="block text-sm font-medium text-gray-700 mb-2">Publication Name</label>
                         <input type="text" name="name" placeholder="Enter publication name *" value="{{ old('name') }}" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all @if(!session('edit_error_id') && $errors->has('name')) border-red-500 ring-2 ring-red-200 @endif" >
                         @error('name')
+                            @if(!session('edit_error_id'))
+                                <div class="text-red-500 text-sm mt-1 flex items-center">
+                                    <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    {{ $message }}
+                                </div>
+                            @endif
+                        @enderror
+                    </div>
+                    <div class="md:col-span-1">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Price</label>
+                        <input type="number" step="0.01" min="0" name="price" placeholder="Enter price *" value="{{ old('price') }}"
+                            class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all @if(!session('edit_error_id') && $errors->has('price')) border-red-500 ring-2 ring-red-200 @endif">
+                        @error('price')
                             @if(!session('edit_error_id'))
                                 <div class="text-red-500 text-sm mt-1 flex items-center">
                                     <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
@@ -142,6 +157,7 @@
                     <thead>
                         <tr class="bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200">
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Name</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Price</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Status</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Actions</th>
                         </tr>
@@ -153,6 +169,7 @@
                         <form id="edit-form-{{ $publication->id }}" method="POST" action="{{ route('publications.update', $publication->id) }}" @if($editError) style="display:table-row;" @else class="hidden" style="display:none;" @endif>
                             @csrf
                             @method('PATCH')
+
                             <!-- Name Column -->
                             <td class="px-6 py-4">
                                 <div class="flex items-center">
@@ -173,6 +190,26 @@
                                     </div>
                                 </div>
                             </td>
+
+                            <!-- Price Column -->
+                            <td class="px-6 py-4">
+                                <span id="price-display-{{ $publication->id }}" @if($editError) style="display:none;" @endif class="text-sm font-semibold text-gray-900">
+                                    {{ number_format((float)$publication->price, 2) }}
+                                </span>
+                                <input id="price-input-{{ $publication->id }}" type="number" step="0.01" min="0" name="price"
+                                       value="{{ old('price', $publication->price) }}"
+                                       class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent @if($editError && $errors->has('price')) border-red-500 ring-2 ring-red-200 @endif"
+                                       style="@if(!$editError) display:none; @endif">
+                                @if($editError && $errors->has('price'))
+                                    <div class="text-red-500 text-sm mt-1 flex items-center">
+                                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        {{ $errors->first('price') }}
+                                    </div>
+                                @endif
+                            </td>
+
                             <!-- Status Column -->
                             <td class="px-6 py-4">
                                 <span id="status-display-{{ $publication->id }}" @if($editError) style="display:none;" @endif>
@@ -202,6 +239,7 @@
                                 </span>
                             </td>
                         </form>
+
                         <!-- Actions Column -->
                         <td class="px-6 py-4 text-sm font-medium">
                             @php $editError = session('edit_error_id') == $publication->id; @endphp
@@ -241,7 +279,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="3" class="px-6 py-12 text-center">
+                        <td colspan="4" class="px-6 py-12 text-center">
                             <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                             </svg>
@@ -265,24 +303,35 @@
         function enableEdit(id) {
             document.getElementById('name-display-' + id).style.display = 'none';
             document.getElementById('name-input-' + id).style.display = 'inline';
+
+            document.getElementById('price-display-' + id).style.display = 'none';
+            document.getElementById('price-input-' + id).style.display = 'inline';
+
             document.getElementById('edit-form-' + id).style.display = 'inline';
             document.getElementById('status-display-' + id).style.display = 'none';
             document.getElementById('status-edit-' + id).style.display = 'inline';
             document.getElementById('action-buttons-' + id).style.display = 'none';
             document.getElementById('edit-buttons-' + id).style.display = 'flex';
         }
+
         function cancelEdit(id) {
             document.getElementById('name-display-' + id).style.display = 'inline';
             document.getElementById('name-input-' + id).style.display = 'none';
+
+            document.getElementById('price-display-' + id).style.display = 'inline';
+            document.getElementById('price-input-' + id).style.display = 'none';
+
             document.getElementById('edit-form-' + id).style.display = 'none';
             document.getElementById('status-display-' + id).style.display = 'inline';
             document.getElementById('status-edit-' + id).style.display = 'none';
             document.getElementById('action-buttons-' + id).style.display = 'flex';
             document.getElementById('edit-buttons-' + id).style.display = 'none';
         }
+
         function submitEdit(id) {
             document.getElementById('edit-form-' + id).submit();
         }
+
         function togglePublicationStatus(publicationId) {
             fetch(`/publications/${publicationId}/toggle-status`, {
                 method: 'PATCH',

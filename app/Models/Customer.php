@@ -231,12 +231,9 @@ class Customer extends Model
      */
     public static function publicationDailyPrices(): array
     {
-        return [
-            // key: lowercase publication name
-            'daily mirror'     => 120.00,
-            'lankadeepa'       => 100.00,
-            'the sunday times' => 150.00,
-            'deshaya'          => 110.00,
-        ];
+        return Publication::where('status', 1)
+            ->get(['name', 'price'])
+            ->mapWithKeys(fn ($p) => [strtolower(trim($p->name)) => (float) $p->price])
+            ->toArray();
     }
 }

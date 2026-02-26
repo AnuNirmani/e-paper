@@ -43,11 +43,14 @@ class PublicationController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255|unique:publications,name',
+            'name'   => 'required|string|max:255|unique:publications,name',
+            'price'  => 'required|numeric|min:0',
+            'status' => 'nullable|in:1,0',
         ]);
 
         Publication::create([
-            'name' => $request->name,
+            'name'   => $request->name,
+            'price'  => round((float) $request->price, 2),
             'status' => $request->status ?? 1,
         ]);
 
@@ -66,6 +69,7 @@ class PublicationController extends Controller
     {
         $validator = \Validator::make($request->all(), [
             'name'   => 'required|string|max:255|unique:publications,name,' . $id,
+            'price'  => 'required|numeric|min:0',
             'status' => 'required|in:1,0',
         ]);
 
@@ -78,7 +82,8 @@ class PublicationController extends Controller
 
         $publication = Publication::findOrFail($id);
         $publication->update([
-            'name' => $request->name,
+            'name'   => $request->name,
+            'price'  => round((float) $request->price, 2),
             'status' => $request->status,
         ]);
 
