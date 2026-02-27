@@ -407,6 +407,7 @@
                                                     name="publications[{{ $publication->id }}][selected]"
                                                     value="1"
                                                     data-price="{{ $unitPrice }}"
+                                                    data-days-per-month="{{ $publication->days_per_month ?? 30 }}"
                                                     class="pub-checkbox h-5 w-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500 transition-all cursor-pointer"
                                                     {{ in_array($publication->id, $customerPublications) ? 'checked' : '' }}
                                                 >
@@ -495,12 +496,16 @@
         };
 
         const syncTotals = () => {
-            const days = getDays();
+            const months = parseInt(durationEl.value, 10) || 0;
             let total = 0;
             checkboxes.forEach(cb => {
                 const id = cb.id.replace('pub_', '');
                 const unit = Number(cb.dataset.price || 0);
-                const line = cb.checked ? unit * days : 0;
+                const daysPerMonth = Number(cb.dataset.daysPerMonth || 30);
+                
+                // New logic: duration * days_per_month * unit_price
+                const line = cb.checked ? (months * daysPerMonth * unit) : 0;
+                
                 const lineEl = document.querySelector(`.pub-line-total[data-pub-id="${id}"]`);
                 if (lineEl) lineEl.textContent = money(line);
                 total += line;

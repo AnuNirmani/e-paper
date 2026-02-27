@@ -116,7 +116,7 @@ class CustomerController extends Controller
         }
 
         // Calculate pricing
-        $pricing = $this->buildPricing($publicationIds, $validated['starting_date'], $validated['ending_date']);
+        $pricing = $this->buildPricing($publicationIds, (int)$validated['duration']);
         $validated['payment_amount'] = $pricing['total'];
 
         $customer = Customer::storeCustomer($validated);
@@ -185,7 +185,7 @@ class CustomerController extends Controller
         }
 
         // Calculate pricing
-        $pricing = $this->buildPricing($publicationIds, $validated['starting_date'], $validated['ending_date']);
+        $pricing = $this->buildPricing($publicationIds, (int)$validated['duration']);
         $validated['payment_amount'] = $pricing['total'];
 
         Customer::updateCustomer($id, $validated);
@@ -199,19 +199,18 @@ class CustomerController extends Controller
     /**
      * Calculate total and per-publication pricing for a date range.
      */
-    private function buildPricing(array $publicationIds, string $startingDate, string $endingDate): array
+    private function buildPricing(array $publicationIds, int $duration): array
     {
-        $start = Carbon::parse($startingDate)->startOfDay();
-        $end = Carbon::parse($endingDate)->startOfDay();
-        $days = max(1, $start->diffInDays($end) + 1);
-
         $pivot = [];
         $total = 0.0;
 
-        $publications = \App\Models\Publication::whereIn('id', $publicationIds)->get(['id', 'price']);
+        $publications = \App\Models\Publication::whereIn('id', $publicationIds)->get(['id', 'price', 'days_per_month']);
         foreach ($publications as $publication) {
             $daily = (float) ($publication->price ?? 0);
-            $lineTotal = round($daily * $days, 2);
+            $daysPerMonth = (int) ($publication->days_per_month ?? 30);
+            
+            // New logic: duration * days_per_month * daily_price
+            $lineTotal = round($duration * $daysPerMonth * $daily, 2);
 
             $pivot[$publication->id] = ['price' => $lineTotal];
             $total += $lineTotal;
