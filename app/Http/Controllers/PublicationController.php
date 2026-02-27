@@ -43,15 +43,17 @@ class PublicationController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name'   => 'required|string|max:255|unique:publications,name',
-            'price'  => 'required|numeric|min:0',
-            'status' => 'nullable|in:1,0',
+            'name'           => 'required|string|max:255|unique:publications,name',
+            'price'          => 'required|numeric|min:0',
+            'days_per_month' => 'required|integer|min:1|max:31',
+            'status'         => 'nullable|in:1,0',
         ]);
 
         Publication::create([
-            'name'   => $request->name,
-            'price'  => round((float) $request->price, 2),
-            'status' => $request->status ?? 1,
+            'name'           => $request->name,
+            'price'          => round((float) $request->price, 2),
+            'days_per_month' => $request->days_per_month,
+            'status'         => $request->status ?? 1,
         ]);
 
         return redirect()->route('publications.index')
@@ -68,9 +70,10 @@ class PublicationController extends Controller
     public function update(Request $request, $id)
     {
         $validator = \Validator::make($request->all(), [
-            'name'   => 'required|string|max:255|unique:publications,name,' . $id,
-            'price'  => 'required|numeric|min:0',
-            'status' => 'required|in:1,0',
+            'name'           => 'required|string|max:255|unique:publications,name,' . $id,
+            'price'          => 'required|numeric|min:0',
+            'days_per_month' => 'required|integer|min:1|max:31',
+            'status'         => 'required|in:1,0',
         ]);
 
         if ($validator->fails()) {
@@ -82,9 +85,10 @@ class PublicationController extends Controller
 
         $publication = Publication::findOrFail($id);
         $publication->update([
-            'name'   => $request->name,
-            'price'  => round((float) $request->price, 2),
-            'status' => $request->status,
+            'name'           => $request->name,
+            'price'          => round((float) $request->price, 2),
+            'days_per_month' => $request->days_per_month,
+            'status'         => $request->status,
         ]);
 
         return redirect()->route('publications.index')

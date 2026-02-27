@@ -53,68 +53,89 @@
         </div>
 
         <!-- Add Publication Card -->
-        <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl shadow-md p-6 mb-6 border border-blue-100">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                </svg>
-                Add New Publication
-            </h3>
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-8">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-xl font-bold text-gray-900 flex items-center">
+                    <div class="bg-blue-100 rounded-lg p-2 mr-3">
+                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                        </svg>
+                    </div>
+                    Add New Publication
+                </h3>
+            </div>
+            
             <form method="POST" action="{{ route('publications.store') }}">
                 @csrf
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                    <div class="md:col-span-1">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Publication Name</label>
-                        <input type="text" name="name" placeholder="Enter publication name *" value="{{ old('name') }}" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all @if(!session('edit_error_id') && $errors->has('name')) border-red-500 ring-2 ring-red-200 @endif" >
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+                    <!-- Name -->
+                    <div class="md:col-span-4">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Publication Name</label>
+                        <div class="relative group">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-blue-500 transition-colors">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
+                                </svg>
+                            </div>
+                            <input type="text" name="name" placeholder="Publication name..." value="{{ old('name') }}" 
+                                class="block w-full pl-11 pr-4 py-3.5 bg-gray-50 border-0 rounded-xl text-gray-900 ring-1 ring-inset ring-gray-200 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-500 transition-all duration-200 sm:text-sm sm:leading-6 @error('name') ring-red-500 @enderror">
+                        </div>
                         @error('name')
-                            @if(!session('edit_error_id'))
-                                <div class="text-red-500 text-sm mt-1 flex items-center">
-                                    <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
-                                    </svg>
-                                    {{ $message }}
-                                </div>
-                            @endif
+                            <p class="mt-1.5 text-xs text-red-500 font-medium pl-1">{{ $message }}</p>
                         @enderror
                     </div>
-                    <div class="md:col-span-1">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Price</label>
-                        <input type="number" step="0.01" min="0" name="price" placeholder="Enter price *" value="{{ old('price') }}"
-                            class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all @if(!session('edit_error_id') && $errors->has('price')) border-red-500 ring-2 ring-red-200 @endif">
+
+                    <!-- Days per Month -->
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Days / Month</label>
+                        <div class="relative group">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-blue-500 transition-colors">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                </svg>
+                            </div>
+                            <input type="number" name="days_per_month" value="{{ old('days_per_month', 30) }}" 
+                                class="block w-full pl-11 pr-4 py-3.5 bg-gray-50 border-0 rounded-xl text-gray-900 ring-1 ring-inset ring-gray-200 focus:ring-2 focus:ring-inset focus:ring-blue-500 transition-all duration-200 sm:text-sm sm:leading-6 @error('days_per_month') ring-red-500 @enderror">
+                        </div>
+                        @error('days_per_month')
+                            <p class="mt-1.5 text-xs text-red-500 font-medium pl-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- Price -->
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Price</label>
+                        <div class="relative group">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-blue-500 transition-colors">
+                                <span class="text-xs font-bold">LKR</span>
+                            </div>
+                            <input type="number" step="0.01" name="price" placeholder="0.00" value="{{ old('price') }}" 
+                                class="block w-full pl-12 pr-4 py-3.5 bg-gray-50 border-0 rounded-xl text-gray-900 ring-1 ring-inset ring-gray-200 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-500 transition-all duration-200 sm:text-sm sm:leading-6 @error('price') ring-red-500 @enderror">
+                        </div>
                         @error('price')
-                            @if(!session('edit_error_id'))
-                                <div class="text-red-500 text-sm mt-1 flex items-center">
-                                    <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
-                                    </svg>
-                                    {{ $message }}
-                                </div>
-                            @endif
+                            <p class="mt-1.5 text-xs text-red-500 font-medium pl-1">{{ $message }}</p>
                         @enderror
                     </div>
-                    <div class="md:col-span-1">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
-                        <select name="status" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all @if(!session('edit_error_id') && $errors->has('status')) border-red-500 ring-2 ring-red-200 @endif">
+
+                    <!-- Status -->
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Status</label>
+                        <select name="status" class="block w-full px-4 py-3.5 bg-gray-50 border-0 rounded-xl text-gray-900 ring-1 ring-inset ring-gray-200 focus:ring-2 focus:ring-inset focus:ring-blue-500 transition-all duration-200 sm:text-sm sm:leading-6 appearance-none @error('status') ring-red-500 @enderror">
                             <option value="1" {{ old('status', '1') == '1' ? 'selected' : '' }}>Active</option>
                             <option value="0" {{ old('status') == '0' ? 'selected' : '' }}>Inactive</option>
                         </select>
                         @error('status')
-                            @if(!session('edit_error_id'))
-                                <div class="text-red-500 text-sm mt-1 flex items-center">
-                                    <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
-                                    </svg>
-                                    {{ $message }}
-                                </div>
-                            @endif
+                            <p class="mt-1.5 text-xs text-red-500 font-medium pl-1">{{ $message }}</p>
                         @enderror
                     </div>
-                    <div class="md:col-span-1 flex items-end">
-                        <button type="submit" class="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5 flex items-center justify-center">
+
+                    <!-- Actions -->
+                    <div class="md:col-span-2 flex items-end">
+                        <button type="submit" class="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-3.5 px-6 rounded-xl shadow-lg shadow-blue-100 flex items-center justify-center transition-all duration-200 transform hover:-translate-y-0.5 active:scale-95">
                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                             </svg>
-                            Add Publication
+                            Add
                         </button>
                     </div>
                 </div>
@@ -157,6 +178,7 @@
                     <thead>
                         <tr class="bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200">
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Name</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Days/Month</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Price</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Status</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Actions</th>
@@ -189,6 +211,25 @@
                                         @endif
                                     </div>
                                 </div>
+                            </td>
+
+                            <!-- Days per Month Column -->
+                            <td class="px-6 py-4">
+                                <span id="days-display-{{ $publication->id }}" @if($editError) style="display:none;" @endif class="text-sm font-semibold text-gray-900">
+                                    {{ $publication->days_per_month }}
+                                </span>
+                                <input id="days-input-{{ $publication->id }}" type="number" name="days_per_month"
+                                       value="{{ old('days_per_month', $publication->days_per_month) }}"
+                                       class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent @if($editError && $errors->has('days_per_month')) border-red-500 ring-2 ring-red-200 @endif"
+                                       style="@if(!$editError) display:none; @endif">
+                                @if($editError && $errors->has('days_per_month'))
+                                    <div class="text-red-500 text-sm mt-1 flex items-center">
+                                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        {{ $errors->first('days_per_month') }}
+                                    </div>
+                                @endif
                             </td>
 
                             <!-- Price Column -->
@@ -304,6 +345,9 @@
             document.getElementById('name-display-' + id).style.display = 'none';
             document.getElementById('name-input-' + id).style.display = 'inline';
 
+            document.getElementById('days-display-' + id).style.display = 'none';
+            document.getElementById('days-input-' + id).style.display = 'inline';
+
             document.getElementById('price-display-' + id).style.display = 'none';
             document.getElementById('price-input-' + id).style.display = 'inline';
 
@@ -317,6 +361,9 @@
         function cancelEdit(id) {
             document.getElementById('name-display-' + id).style.display = 'inline';
             document.getElementById('name-input-' + id).style.display = 'none';
+
+            document.getElementById('days-display-' + id).style.display = 'inline';
+            document.getElementById('days-input-' + id).style.display = 'none';
 
             document.getElementById('price-display-' + id).style.display = 'inline';
             document.getElementById('price-input-' + id).style.display = 'none';

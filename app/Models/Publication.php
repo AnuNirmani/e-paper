@@ -15,6 +15,7 @@ class Publication extends Model
     protected $fillable = [
         'name',
         'price',
+        'days_per_month',
         'status',
         'deleted_at',
     ];
@@ -36,12 +37,13 @@ class Publication extends Model
     public static function createPublication($data)
     {
         return DB::table('publications')->insert([
-            'name'       => $data['name'],
-            'price'      => isset($data['price']) ? round((float)$data['price'], 2) : 0.00,
-            'status'     => $data['status'] ?? 1,
-            'created_at' => now(),
-            'updated_at' => now(),
-            'deleted_at' => null,
+            'name'           => $data['name'],
+            'price'          => isset($data['price']) ? round((float)$data['price'], 2) : 0.00,
+            'days_per_month' => $data['days_per_month'] ?? 30,
+            'status'         => $data['status'] ?? 1,
+            'created_at'     => now(),
+            'updated_at'     => now(),
+            'deleted_at'     => null,
         ]);
     }
 
