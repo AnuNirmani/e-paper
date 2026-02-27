@@ -88,6 +88,12 @@
                                 {{ $customer->whatsapp_number }}
                             </div>
                         </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Order ID</label>
+                            <div class="bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-gray-900 font-medium">
+                                {{ $customer->order_id ?? '-' }}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

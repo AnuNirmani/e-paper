@@ -105,7 +105,7 @@
                 <form method="GET" action="" class="flex gap-2 w-full lg:w-auto">
                     <input type="hidden" name="sort" value="{{ request('sort') }}">
                     <div class="relative flex-1 lg:w-80">
-                        <input type="text" name="search" placeholder="Search customers..." value="{{ request('search') }}" class="w-full border border-gray-300 rounded-lg pl-10 pr-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" />
+                        <input type="text" name="search" placeholder="Search name, WhatsApp, or Order ID..." value="{{ request('search') }}" class="w-full border border-gray-300 rounded-lg pl-10 pr-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" />
                         <svg class="w-5 h-5 text-gray-400 absolute left-3 top-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                         </svg>
@@ -143,6 +143,7 @@
                                     <div class="ml-4">
                                         <div class="text-sm font-semibold text-gray-900">{{ $customer->first_name }} {{ $customer->last_name }}</div>
                                         <div class="text-sm text-gray-500">{{ $customer->email }}</div>
+                                        <div class="text-xs text-indigo-600 font-medium">Order ID: {{ $customer->order_id ?? '-' }}</div>
                                     </div>
                                 </div>
                             </td>

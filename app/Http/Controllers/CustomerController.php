@@ -81,6 +81,7 @@ class CustomerController extends Controller
             'phone'           => 'required|string|max:255',
             'whatsapp_number' => 'required|string|max:255',
             'email'           => 'email:rfc,dns|unique:customers,email',
+            'order_id'        => 'required|string|max:255|unique:customers,order_id',
             'starting_date'   => 'required|date',
             'ending_date'     => 'required|date|after_or_equal:starting_date',
             'country'         => 'required|string|max:255',
@@ -94,6 +95,8 @@ class CustomerController extends Controller
             'payment_amount'  => 'required|numeric|min:0',
             'payment_receipt' => 'required|boolean',
         ]);
+
+        $validated['order_id'] = trim($validated['order_id']);
 
         // Extract publication IDs
         $publicationIds = [];
@@ -147,6 +150,7 @@ class CustomerController extends Controller
             'phone'           => 'required|string|max:255',
             'whatsapp_number' => 'required|string|max:255',
             'email'           => 'required|email:rfc,dns|unique:customers,email,' . $id . ',id',
+            'order_id'        => 'required|string|max:255|unique:customers,order_id,' . $id . ',id',
             'starting_date'   => 'required|date',
             'ending_date'     => 'required|date|after_or_equal:starting_date',
             'country'         => 'required|string|max:255',
@@ -160,6 +164,8 @@ class CustomerController extends Controller
             'payment_amount'  => 'required|numeric|min:0',
             'payment_receipt' => 'required|boolean',
         ]);
+
+        $validated['order_id'] = trim($validated['order_id']);
 
         // Extract publication IDs
         $publicationIds = [];

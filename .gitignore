@@ -18,5 +18,7 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
-/database/migrations/
-/database/seeders/
+/database/migrations/*
+!/database/migrations/.gitkeep
+/database/seeders/*
+!/database/seeders/.gitkeep

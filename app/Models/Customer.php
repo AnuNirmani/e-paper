@@ -33,6 +33,7 @@ class Customer extends Model
         'phone',
         'whatsapp_number',
         'email',
+        'order_id',
         'starting_date',
         'ending_date',
         'duration',
@@ -53,7 +54,8 @@ class Customer extends Model
             return $query->where(function($q) use ($search) {
                 $q->where('first_name', 'like', "%{$search}%")
                   ->orWhere('last_name', 'like', "%{$search}%")
-                  ->orWhere('whatsapp_number', 'like', "%{$search}%");
+                  ->orWhere('whatsapp_number', 'like', "%{$search}%")
+                  ->orWhere('order_id', 'like', "%{$search}%");
             });
         }
         return $query;
@@ -117,6 +119,7 @@ class Customer extends Model
             'phone'           => $data['phone'] ?? null,
             'whatsapp_number' => $data['whatsapp_number'] ?? null,
             'email'           => $data['email'] ?? null,
+            'order_id'        => isset($data['order_id']) ? trim($data['order_id']) : null,
             'starting_date'   => $data['starting_date'] ?? null,
             'ending_date'     => $data['ending_date'] ?? null,
             'duration'        => $data['duration'] ?? 0,
@@ -141,6 +144,7 @@ class Customer extends Model
             'phone'           => $data['phone'] ?? null,
             'whatsapp_number' => $data['whatsapp_number'] ?? null,
             'email'           => $data['email'] ?? null,
+            'order_id'        => isset($data['order_id']) ? trim($data['order_id']) : null,
             'starting_date'   => $data['starting_date'] ?? null,
             'ending_date'     => $data['ending_date'] ?? null,
             'duration'        => $data['duration'] ?? 0,
