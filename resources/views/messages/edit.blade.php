@@ -137,7 +137,7 @@
                         </div>
 
                         <!-- Enhanced Placeholder Guide -->
-                        @if(in_array($message->key, ['subscription_notify_7days','subscription_notify_3days','subscription_notify_today','subscription_notify_expired']))
+                        @if(isset($message->key) && (in_array($message->key, ['subscription_notify_7days','subscription_notify_3days','subscription_notify_today','subscription_notify_expired']) || str_starts_with($message->key, 'subscription_notify')))
                         <div class="bg-indigo-50/50 border border-indigo-100 rounded-2xl p-6 transition-all hover:bg-indigo-50">
                             <div class="flex items-center space-x-3 mb-4">
                                 <div class="p-1.5 bg-indigo-500 rounded-lg shadow-sm">
@@ -159,6 +159,10 @@
                                 <div class="group bg-white p-4 rounded-xl border border-indigo-100 shadow-sm transition-all hover:scale-[1.02] hover:shadow-md cursor-default">
                                     <div class="text-indigo-600 font-mono text-xs font-bold mb-2 group-hover:text-indigo-700">{days_remaining}</div>
                                     <p class="text-[11px] text-indigo-400 font-medium leading-tight">Humanized time until expiry (e.g., "3 days").</p>
+                                </div>
+                                <div class="group bg-white p-4 rounded-xl border border-indigo-100 shadow-sm transition-all hover:scale-[1.02] hover:shadow-md cursor-default">
+                                    <div class="text-indigo-600 font-mono text-xs font-bold mb-2 group-hover:text-indigo-700">{newspapers_taken}</div>
+                                    <p class="text-[11px] text-indigo-400 font-medium leading-tight">A list of newspapers the customer has taken.</p>
                                 </div>
                             </div>
                         </div>

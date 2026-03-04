@@ -38,7 +38,10 @@ class MessageController extends Controller
 
     public function edit(Message $message)
     {
-        return view('messages.edit', compact('message'));
+        $placeholders = $message->placeholderHints();
+        ksort($placeholders);
+
+        return view('messages.edit', compact('message', 'placeholders'));
     }
 
     public function update(Request $request, Message $message)

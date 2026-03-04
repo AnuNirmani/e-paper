@@ -257,6 +257,8 @@ class WhatsAppController extends Controller
                 $daysText = 'expired';
             }
 
+            $newspapersTaken = $customer->publications->pluck('name')->implode(', ');
+
             $message = $messageTemplateService->buildSubscriptionMessage(
                 $key,
                 '', // No hardcoded fallback — edit templates at /messages
@@ -264,6 +266,7 @@ class WhatsAppController extends Controller
                     'name' => $customerName,
                     'ending_date' => $endingDateStr,
                     'days_remaining' => $daysText,
+                    'newspapers_taken' => $newspapersTaken,
                 ]
             );
 
