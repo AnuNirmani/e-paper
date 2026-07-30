@@ -70,7 +70,7 @@ class CopyController extends Controller
         $request->validate([
             'customer_id'    => 'nullable',
             'publication_id' => 'required',
-            'file'           => 'required|file|mimes:pdf|max:20480',
+            'file'           => 'required|file|mimes:pdf|max:25600',
             'message'        => 'nullable|string'
         ]);
 

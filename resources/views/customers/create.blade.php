@@ -339,10 +339,9 @@
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Total Payment (Rs)</label>
-                                <div id="total_payment_display" class="border border-gray-300 rounded-lg px-4 py-3 w-full bg-gray-50 font-semibold text-gray-900">
-                                    Rs 0.00
-                                </div>
-                                <input type="hidden" name="payment_amount" id="payment_amount_input" value="{{ old('payment_amount') }}">
+                                <input type="number" step="0.01" min="0" name="payment_amount" id="payment_amount_input"
+                                    class="border border-gray-300 rounded-lg px-4 py-3 w-full font-semibold text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all @error('payment_amount') border-red-500 ring-2 ring-red-200 @enderror"
+                                    value="{{ old('payment_amount', '0.00') }}" placeholder="0.00">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">
@@ -456,12 +455,11 @@
         const durationEl = document.querySelector('select[name="duration"]');
         const startEl = document.querySelector('input[name="starting_date"]');
         const endEl = document.querySelector('input[name="ending_date"]');
-        const totalDisplayEl = document.getElementById('total_payment_display');
         const totalInputEl = document.getElementById('payment_amount_input');
         const checkboxes = document.querySelectorAll('.pub-checkbox');
 
         // if (!durationEl || !startEl || !endEl) return;
-        if (!durationEl || !startEl || !endEl || !totalDisplayEl) return;
+        if (!durationEl || !startEl || !endEl || !totalInputEl) return;
 
         const toYmd = (date) => {
             const y = date.getFullYear();
@@ -509,7 +507,6 @@
                 if (lineEl) lineEl.textContent = money(line);
                 total += line;
             });
-            totalDisplayEl.textContent = money(total);
             if (totalInputEl) totalInputEl.value = total.toFixed(2);
         };
 
