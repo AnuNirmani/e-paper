@@ -134,7 +134,8 @@
         const fileInput = document.getElementById('file-input');
         const fileError = document.getElementById('file-error');
         const submitButton = document.getElementById('submit-button');
-        const maxSize = 20 * 1024 * 1024; // 20MB in bytes
+        const minSize = 10 * 1024; // 10KB in bytes
+        const maxSize = 25 * 1024 * 1024; // 25MB in bytes
 
         fileInput.addEventListener('change', function() {
             const file = this.files[0];
@@ -152,10 +153,15 @@
             if (file.type !== 'application/pdf') {
                 errorMsg = 'Only PDF files are allowed. Please select a PDF file.';
             }
+            // Check minimum file size
+            else if (file.size < minSize) {
+                const sizeKB = (file.size / 1024).toFixed(2);
+                errorMsg = `File size (${sizeKB}KB) is below the minimum required size of 10KB.`;
+            }
             // Check file size
             else if (file.size > maxSize) {
                 const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
-                errorMsg = `File size (${sizeMB}MB) exceeds the maximum allowed size of 20MB.`;
+                errorMsg = `File size (${sizeMB}MB) exceeds the maximum allowed size of 25MB.`;
             }
 
             if (errorMsg) {

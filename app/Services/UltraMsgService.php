@@ -32,11 +32,13 @@ class UltraMsgService
             return null;
         }
 
+        $timeoutSeconds = (int) env('ULTRAMSG_HTTP_TIMEOUT', 600);
+
         try {
-            // Using withOptions to disable SSL verification (verify => false) and increase timeout
             $response = Http::withOptions([
                 'verify' => false,
-                'timeout' => 300, // 5 minutes timeout for large file uploads
+                'connect_timeout' => 30,
+                'timeout' => $timeoutSeconds,
             ])
                 ->asForm()
                 ->post("https://api.ultramsg.com/{$this->instanceId}/messages/document", [
@@ -44,7 +46,7 @@ class UltraMsgService
                 'to' => $to,
                 'document' => $document,
                 'filename' => $filename,
-                'caption' => $caption
+                'caption' => $caption,
             ]);
 
             // Log without the massive body if it's base64
@@ -95,13 +97,14 @@ class UltraMsgService
         try {
             $response = Http::withOptions([
                 'verify' => false,
+                'connect_timeout' => 15,
                 'timeout' => 60,
             ])
                 ->asForm()
                 ->post("https://api.ultramsg.com/{$this->instanceId}/messages/chat", [
                 'token' => $this->token,
                 'to' => $to,
-                'body' => $message
+                'body' => $message,
             ]);
 
             Log::info("UltraMsg Send Message to {$to}", [

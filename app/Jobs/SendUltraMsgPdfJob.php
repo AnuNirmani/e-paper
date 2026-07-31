@@ -16,7 +16,7 @@ class SendUltraMsgPdfJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public $timeout = 120;
+    public $timeout = 600;
     public $tries = 3;
 
     protected $customerId;
@@ -55,7 +55,7 @@ class SendUltraMsgPdfJob implements ShouldQueue
             return;
         }
 
-        $documentBodyToSend = null;
+        $fileToSend = null;
 
         Log::info("SendUltraMsgPdfJob: Starting job for customer {$this->customerId}", [
             'watermark_text' => $this->watermarkText,
@@ -63,18 +63,15 @@ class SendUltraMsgPdfJob implements ShouldQueue
             'original_file' => $this->originalFilePath
         ]);
 
-        // Handle Watermarking if requested
         if ($this->watermarkText && $this->outputDir) {
             Log::info("SendUltraMsgPdfJob: Attempting to add watermark for customer {$this->customerId}");
             try {
-                // Ensure output directory exists (redundant check but safe)
                 if (!file_exists($this->outputDir)) {
                     mkdir($this->outputDir, 0777, true);
                 }
 
                 $personalizedFilename = "{$this->customerId}_" . time();
-                
-                // Add watermark
+
                 $newPath = $watermarkService->addWatermark(
                     $this->originalFilePath,
                     $this->watermarkText,
@@ -87,12 +84,7 @@ class SendUltraMsgPdfJob implements ShouldQueue
                         'watermarked_file' => $newPath,
                         'file_size' => filesize($newPath)
                     ]);
-                    // Convert personalized file to base64
-                    $pData = file_get_contents($newPath);
-                    $documentBodyToSend = "data:application/pdf;base64," . base64_encode($pData);
-                    
-                    // Keep the file for debugging - DON'T delete it
-                    // @unlink($newPath);
+                    $fileToSend = $newPath;
                 } else {
                     Log::warning("SendUltraMsgPdfJob: Watermarked file not created for customer {$this->customerId}", [
                         'returned_path' => $newPath
@@ -100,19 +92,29 @@ class SendUltraMsgPdfJob implements ShouldQueue
                 }
             } catch (\Exception $e) {
                 Log::error("Watermarking failed for customer {$this->customerId} in Job: " . $e->getMessage());
-                // Fallback to sending original file will happen below if $documentBodyToSend is null
             }
         }
 
-        // Fallback: Send Original File if Watermarking wasn't needed or failed
-        if (!$documentBodyToSend) {
+        if (!$fileToSend) {
             if (file_exists($this->originalFilePath)) {
-                $data = file_get_contents($this->originalFilePath);
-                $documentBodyToSend = "data:application/pdf;base64," . base64_encode($data);
+                $fileToSend = $this->originalFilePath;
             } else {
                 Log::error("Original file not found for customer {$this->customerId}: {$this->originalFilePath}");
-                return; // Cannot send
+                return;
             }
+        }
+
+        // UltraMsg base64 field limit is ~10 MB of chars (~6.9 MB raw). Use public URL for larger files.
+        $fileSize = filesize($fileToSend);
+        if (($fileSize * 1.37) > 9_500_000) {
+            $publicBase = rtrim(str_replace('\\', '/', public_path()), '/');
+            $filePath   = str_replace('\\', '/', $fileToSend);
+            $relative   = ltrim(str_replace($publicBase, '', $filePath), '/');
+            $documentBodyToSend = rtrim(config('app.url'), '/') . '/' . $relative;
+            Log::info("SendUltraMsgPdfJob: Sending large file ({$fileSize} bytes) by URL", ['url' => $documentBodyToSend]);
+        } else {
+            $data = file_get_contents($fileToSend);
+            $documentBodyToSend = "data:application/pdf;base64," . base64_encode($data);
         }
 
         // Send via UltraMsg

@@ -70,7 +70,7 @@ class CopyController extends Controller
         $request->validate([
             'customer_id'    => 'nullable',
             'publication_id' => 'required',
-            'file'           => 'required|file|mimes:pdf|max:25600',
+            'file'           => 'required|file|mimes:pdf|min:10|max:25600',
             'message'        => 'nullable|string'
         ]);
 
@@ -94,11 +94,6 @@ class CopyController extends Controller
         $file->move(public_path($folder), $filename);
         
         $originalFullPath = public_path($folder . '/' . $filename);
-
-        // Prepare Original Base64 Data (Default)
-        $originalFileData = file_get_contents($originalFullPath);
-        $originalBase64Data = base64_encode($originalFileData);
-        $originalDocumentBody = "data:application/pdf;base64," . $originalBase64Data;
 
         // Get active customers for this publication with valid subscriptions
         $customers = $publication->customers()
