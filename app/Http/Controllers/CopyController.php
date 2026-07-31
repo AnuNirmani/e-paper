@@ -108,6 +108,10 @@ class CopyController extends Controller
 
         $sentCount = 0;
         $skippedExpired = 0;
+        $messageTemplateService = app(\App\Services\MessageTemplateService::class);
+        $publicationId = $request->publication_id;
+        $date = now()->format('D, d M Y');
+
         foreach ($customers as $customer) {
             // Double-check subscription is still active
             if (!$customer->isSubscriptionActive()) {
@@ -117,7 +121,11 @@ class CopyController extends Controller
             }
 
             if (!empty($customer->whatsapp_number)) {
-                $caption = $ultraMsgService->getDailyPaperCaption($customer->first_name);
+                $caption = $messageTemplateService->buildSubscriptionMessage(
+                    "pdf_caption_{$publicationId}",
+                    $ultraMsgService->getDailyPaperCaption($customer->first_name),
+                    ['name' => trim($customer->first_name . ' ' . $customer->last_name), 'date' => $date]
+                );
                 
                 // Prepare Watermark Args
                 $watermarkText = null;

@@ -17,7 +17,6 @@ class Publication extends Model
         'price',
         'days_per_month',
         'status',
-        'deleted_at',
     ];
 
     protected $casts = [

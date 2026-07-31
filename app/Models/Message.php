@@ -27,6 +27,13 @@ class Message extends Model
 
     public function placeholderHints(): array
     {
+        if (!empty($this->key) && str_starts_with($this->key, 'pdf_caption')) {
+            return [
+                '{name}' => "Customer's first name.",
+                '{date}' => 'Publication date (e.g., Thu, 23 Jul 2026).',
+            ];
+        }
+
         if (!$this->isSubscriptionNotification()) {
             return [];
         }
