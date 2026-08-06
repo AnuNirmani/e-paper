@@ -18,7 +18,7 @@
                 <h3 class="text-2xl font-bold text-white">File upload</h3>
             </div>
 
-            <form method="POST" action="{{ route('copies.upload.store') }}" enctype="multipart/form-data" class="p-8 space-y-8">
+            <form method="POST" action="{{ route('copies.upload.store') }}" enctype="multipart/form-data" class="p-8 space-y-8" id="upload-form">
                 @csrf
 
                 <!-- WATERMARK SWITCH -->
@@ -131,11 +131,28 @@
         attachFilter('customer-search', 'customer-select');
 
         // File validation
+        const uploadForm = document.getElementById('upload-form');
         const fileInput = document.getElementById('file-input');
         const fileError = document.getElementById('file-error');
         const submitButton = document.getElementById('submit-button');
         const minSize = 10 * 1024; // 10KB in bytes
         const maxSize = 25 * 1024 * 1024; // 25MB in bytes
+        let hasSubmitted = false;
+
+        if (uploadForm && submitButton) {
+            uploadForm.addEventListener('submit', function(event) {
+                if (hasSubmitted) {
+                    event.preventDefault();
+                    return;
+                }
+
+                hasSubmitted = true;
+                submitButton.disabled = true;
+                submitButton.classList.add('opacity-50', 'cursor-not-allowed');
+                submitButton.classList.remove('hover:from-blue-700', 'hover:to-blue-800', 'hover:scale-[1.02]');
+                submitButton.textContent = 'Sending...';
+            });
+        }
 
         fileInput.addEventListener('change', function() {
             const file = this.files[0];
