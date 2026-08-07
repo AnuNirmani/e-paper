@@ -205,6 +205,17 @@
                                         </svg>
                                         Edit
                                     </a>
+                                    @if(!empty($customer->order_id))
+                                                <a href="{{ route('email-notifier.generate', ['orderId' => $customer->order_id, 'show' => 1]) }}"
+                                       target="_blank"
+                                       class="inline-flex items-center px-3 py-1.5 bg-purple-50 text-purple-700 hover:bg-purple-100 rounded-lg transition-colors duration-150"
+                                       title="Generate one-time link for this customer">
+                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 010 5.656l-1.414 1.414a4 4 0 01-5.656-5.656l1.414-1.414m3.536-3.536a4 4 0 015.656 5.656l-1.414 1.414a4 4 0 01-5.656-5.656l1.414-1.414z"></path>
+                                        </svg>
+                                        One-Time Link
+                                    </a>
+                                    @endif
                                     <button onclick="sendSubscriptionNotification({{ $customer->id }}, '{{ $customer->first_name }} {{ $customer->last_name }}')" 
                                             class="inline-flex items-center px-3 py-1.5 bg-green-50 text-green-700 hover:bg-green-100 rounded-lg transition-colors duration-150"
                                             title="Send subscription ending notification via WhatsApp">

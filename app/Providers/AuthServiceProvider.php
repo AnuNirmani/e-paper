@@ -35,6 +35,14 @@ class AuthServiceProvider extends ServiceProvider
     {
         $adminEmails = array_map('strtolower', config('permissions.admin_emails', []));
 
+        if ((bool) $user->is_super_admin === true) {
+            return true;
+        }
+
+        if (strtolower((string) $user->role) === 'super_admin') {
+            return true;
+        }
+
         return in_array(strtolower($user->email), $adminEmails, true);
     }
 }

@@ -9,6 +9,8 @@ use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\WhatsAppController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MessageController;
+use App\Http\Controllers\OneTimeLinkController;
+use App\Http\Controllers\RenewSubscriptionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,6 +30,16 @@ Route::get('/', function () {
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth'])->name('dashboard');
+
+// Public one-time link generator and consumer (for hosted external use)
+Route::get('/EmailNotifier/test/{orderId}', [OneTimeLinkController::class, 'generate'])
+    ->name('email-notifier.generate');
+Route::get('/EmailNotifier/open/{token}', [OneTimeLinkController::class, 'consume'])
+    ->name('email-notifier.consume');
+Route::get('/renew-subscription/email', [RenewSubscriptionController::class, 'fromEmail'])
+    ->name('renew-subscription.email');
+Route::get('/subscribe', [RenewSubscriptionController::class, 'subscribe'])
+    ->name('renew-subscription.subscribe');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
