@@ -122,7 +122,8 @@ class SendUltraMsgPdfJob implements ShouldQueue
             $this->whatsappNumber,
             $documentBodyToSend,
             $this->filename,
-            $this->caption
+            $this->caption,
+            $customer->country  // Pass customer's country code for phone formatting
         );
 
         // Record Copy

@@ -4,6 +4,7 @@ namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use App\Utils\PhoneNumberFormatter;
 
 class UltraMsgService
 {
@@ -17,20 +18,37 @@ class UltraMsgService
     }
 
     /**
+     * Format phone number to E.164 format required by WhatsApp API
+     * 
+     * @param string $phoneNumber The phone number to format
+     * @param string|null $countryCode Optional country code (e.g., 'US', 'GB', 'UG')
+     * @return string Formatted phone number in E.164 format
+     */
+    private function formatPhoneNumber($phoneNumber, $countryCode = null)
+    {
+        return PhoneNumberFormatter::ensureE164($phoneNumber, $countryCode);
+    }
+
+    /**
      * Send a document via WhatsApp
      *
      * @param string $to Recipient WhatsApp number
      * @param string $document URL (http...) or Base64 string
      * @param string $filename Filename to display
      * @param string $caption Caption for the message
+     * @param string|null $countryCode Optional country code for phone number formatting
      * @return array|null Response body or null on failure
      */
-    public function sendDocument($to, $document, $filename, $caption = '')
+    public function sendDocument($to, $document, $filename, $caption = '', $countryCode = null)
     {
         if (!$this->instanceId || !$this->token) {
             Log::error('UltraMsg credentials not found in env.');
             return null;
         }
+
+        // Format phone number to E.164 format for WhatsApp API
+        $formattedTo = $this->formatPhoneNumber($to, $countryCode);
+        Log::info("Phone number formatting: {$to} -> {$formattedTo}");
 
         $timeoutSeconds = (int) env('ULTRAMSG_HTTP_TIMEOUT', 600);
 
@@ -43,7 +61,7 @@ class UltraMsgService
                 ->asForm()
                 ->post("https://api.ultramsg.com/{$this->instanceId}/messages/document", [
                 'token' => $this->token,
-                'to' => $to,
+                'to' => $formattedTo,
                 'document' => $document,
                 'filename' => $filename,
                 'caption' => $caption,
@@ -85,14 +103,19 @@ class UltraMsgService
      *
      * @param string $to Recipient WhatsApp number
      * @param string $message Message text to send
+     * @param string|null $countryCode Optional country code for phone number formatting
      * @return array|null Response body or null on failure
      */
-    public function sendMessage($to, $message)
+    public function sendMessage($to, $message, $countryCode = null)
     {
         if (!$this->instanceId || !$this->token) {
             Log::error('UltraMsg credentials not found in env.');
             return null;
         }
+
+        // Format phone number to E.164 format for WhatsApp API
+        $formattedTo = $this->formatPhoneNumber($to, $countryCode);
+        Log::info("Phone number formatting: {$to} -> {$formattedTo}");
 
         try {
             $response = Http::withOptions([
@@ -103,7 +126,7 @@ class UltraMsgService
                 ->asForm()
                 ->post("https://api.ultramsg.com/{$this->instanceId}/messages/chat", [
                 'token' => $this->token,
-                'to' => $to,
+                'to' => $formattedTo,
                 'body' => $message,
             ]);
 

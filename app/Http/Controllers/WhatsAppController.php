@@ -272,7 +272,7 @@ class WhatsAppController extends Controller
 
             // Send via UltraMsg
             $ultraMsgService = new UltraMsgService();
-            $result = $ultraMsgService->sendMessage($customer->whatsapp_number, $message);
+            $result = $ultraMsgService->sendMessage($customer->whatsapp_number, $message, $customer->country);
 
             if ($result) {
                 return response()->json([
