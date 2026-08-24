@@ -16,28 +16,38 @@ class RenewSubscriptionController extends Controller
             return $this->invalid('Missing sid token.');
         }
 
-        return redirect()->route('renew-subscription.subscribe', ['sid' => $sid]);
-    }
-
-    public function subscribe(Request $request)
-    {
-        $sid = $this->extractSid($request);
-        $prefill = session('renew_prefill');
-        $message = session('renew_message');
-
-        if (!$prefill && $sid !== '') {
-            [$prefill, $error] = $this->resolvePrefillFromSid($sid, true);
-
-            if ($error !== null) {
-                return $this->invalid($error);
-            }
-
-            $message = 'Customer details loaded from secure email link.';
+        $target = trim((string) env('RENEW_SUBSCRIPTION_SUBSCRIBE_URL', ''));
+        if ($target === '') {
+            $target = url('/subscribe');
         }
 
-        return view('renew-subscription.subscribe', [
-            'prefill' => $prefill,
-            'message' => $message,
+        $separator = str_contains($target, '?') ? '&' : '?';
+        return redirect()->away($target.$separator.'sid='.urlencode($sid));
+    }
+
+    public function prefill(Request $request)
+    {
+        $sid = $this->extractSid($request);
+
+        if ($sid === '') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Missing sid token.',
+            ], 422);
+        }
+
+        [$prefill, $error] = $this->resolvePrefillFromSid($sid, true);
+
+        if ($error !== null) {
+            return response()->json([
+                'success' => false,
+                'message' => $error,
+            ], 422);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $prefill,
         ]);
     }
 

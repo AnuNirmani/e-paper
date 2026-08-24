@@ -56,10 +56,10 @@ class OneTimeLinkController extends Controller
 
     private function buildRenewUrl(string $token): string
     {
-        $configuredBase = trim((string) env('RENEW_SUBSCRIPTION_SUBSCRIBE_URL', ''));
+        $configuredBase = trim((string) env('RENEW_SUBSCRIPTION_EMAIL_URL', ''));
 
         if ($configuredBase === '') {
-            $configuredBase = trim((string) env('RENEW_SUBSCRIPTION_EMAIL_URL', ''));
+            $configuredBase = trim((string) env('RENEW_SUBSCRIPTION_SUBSCRIBE_URL', ''));
         }
 
         if ($configuredBase !== '') {
@@ -67,12 +67,15 @@ class OneTimeLinkController extends Controller
             return $configuredBase.$separator.'sid='.urlencode($token);
         }
 
-        return route('renew-subscription.subscribe', ['sid' => $token]);
+        return route('renew-subscription.email', ['sid' => $token]);
     }
 
     private function makeToken(string $orderId): string
     {
         $entropy = $orderId.'|'.Str::uuid()->toString().'|'.microtime(true);
-        return hash('sha512', $entropy).base64_encode(random_bytes(32));
+
+        // Use URL-safe token characters so the visible token exactly matches
+        // the sid value in generated URLs (no %2B, %2F, %3D encoding artifacts).
+        return hash('sha512', $entropy).bin2hex(random_bytes(32));
     }
 }

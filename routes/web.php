@@ -38,8 +38,6 @@ Route::get('/EmailNotifier/open/{token}', [OneTimeLinkController::class, 'consum
     ->name('email-notifier.consume');
 Route::get('/renew-subscription/email', [RenewSubscriptionController::class, 'fromEmail'])
     ->name('renew-subscription.email');
-Route::get('/subscribe', [RenewSubscriptionController::class, 'subscribe'])
-    ->name('renew-subscription.subscribe');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
