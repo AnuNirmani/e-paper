@@ -136,6 +136,10 @@ class CopyController extends Controller
                      $outputDir = public_path($folder);
                  }
 
+                // Rate limiting: Send one PDF at a time with a 5-second gap between each PDF.
+                // Example: 1st PDF = 0s, 2nd PDF = 5s, 3rd PDF = 10s, etc.
+                $delaySeconds = $sentCount * 5;
+
                 SendUltraMsgPdfJob::dispatch(
                     $customer->id,
                     $customer->whatsapp_number,
@@ -145,7 +149,7 @@ class CopyController extends Controller
                     $request->publication_id,
                     $watermarkText,
                     $outputDir
-                );
+                )->delay(now()->addSeconds($delaySeconds));
                 
                 $sentCount++;
 

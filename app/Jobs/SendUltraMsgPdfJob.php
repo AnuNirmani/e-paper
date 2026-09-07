@@ -60,7 +60,9 @@ class SendUltraMsgPdfJob implements ShouldQueue
         Log::info("SendUltraMsgPdfJob: Starting job for customer {$this->customerId}", [
             'watermark_text' => $this->watermarkText,
             'output_dir' => $this->outputDir,
-            'original_file' => $this->originalFilePath
+            'original_file' => $this->originalFilePath,
+            'attempts' => $this->attempts(),
+            'rate_limit_batch' => 'Group of 5 (5 seconds delay between batches)'
         ]);
 
         if ($this->watermarkText && $this->outputDir) {
